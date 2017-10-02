@@ -14,23 +14,29 @@ export default class JSONEditor extends React.Component{
 
   }
 
-  renderText(txt, marginLeft){
+  renderText(key, txt, marginLeft){
     let {marginBottom} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.text);
     return (
-      <input type="text" value={txt} style={style}/>
+      <div style={style}>
+        <label style={styles.label}>{key}</label>
+        <input type="text" value={txt}/>
+      </div>
     );
   }
 
-  renderNumber(num, marginLeft){
+  renderNumber(key, num, marginLeft){
     let {marginBottom} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.number);
     return (
-      <input type="number" value={num} style={style}/>
+      <div style={style}>
+        <label style={styles.label}>{key}</label>
+        <input type="number" value={num}/>
+      </div>
     );
   }
 
-  renderBoolean(val, marginLeft){
+  renderBoolean(key, val, marginLeft){
     let style = merge({marginLeft}, styles.boolean);
     return (
       <select style={style}>
@@ -48,31 +54,30 @@ export default class JSONEditor extends React.Component{
   }
 
 
-  recursiveParseData(data, elems, marginLeft){
+  recursiveParseData(prevKey, data, elems, marginLeft){
     if(isArray(data)){
+      elems.push(this.renderLabel(prevKey, marginLeft));
       for(let val of data){
         this.recursiveParseData(val, elems, marginLeft);
       }
     } else if(isObject(data)){
+      elems.push(this.renderLabel(prevKey, marginLeft));
       Object.keys(data).map(key => {
-        let isParent
-        elems.push(this.renderLabel(key, marginLeft + this.props.marginLeftStep));
-        elems.push(<br/>);
-        this.recursiveParseData(data[key], elems, marginLeft + this.props.marginLeftStep);
+        this.recursiveParseData(key, data[key], elems, marginLeft + this.props.marginLeftStep);
         elems.push(<br/>);
       })
     } else if(isNumber(data)){
-      elems.push(this.renderNumber(data, marginLeft));
+      elems.push(this.renderNumber(prevKey, data, marginLeft));
     } else if(isString(data)) {
-      elems.push(this.renderText(data, marginLeft));
+      elems.push(this.renderText(prevKey, data, marginLeft));
     } else if(isBoolean(data)){
-      elems.push(this.renderBoolean(data, marginLeft));
+      elems.push(this.renderBoolean(prevKey, data, marginLeft));
     }
   }
 
   render(){
     let elems = [];
-    this.recursiveParseData(this.props.data, elems, 0);
+    this.recursiveParseData('', this.props.data, elems, 0);
     return <div>{elems}</div>
   }
 }
