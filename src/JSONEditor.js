@@ -16,38 +16,47 @@ export default class JSONEditor extends React.Component{
 
   renderText(key, txt, marginLeft){
     let {marginBottom} = this.props;
-    let style = merge({marginLeft, marginBottom}, styles.text);
+    let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div style={style}>
-        <label style={styles.label}>{key}</label>
-        <input type="text" value={txt}/>
+        <div style={styles.label}>{key}</div>
+        <div style={styles.value}>
+          <input style={styles.input} type="text" value={txt}/>
+        </div>
       </div>
     );
   }
 
   renderNumber(key, num, marginLeft){
     let {marginBottom} = this.props;
-    let style = merge({marginLeft, marginBottom}, styles.number);
+    let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div style={style}>
-        <label style={styles.label}>{key}</label>
-        <input type="number" value={num}/>
+        <div style={styles.label}>{key}</div>
+        <div style={styles.value}>
+          <input style={styles.input} type="number" value={num}/>
+        </div>
       </div>
     );
   }
 
   renderBoolean(key, val, marginLeft){
-    let style = merge({marginLeft}, styles.boolean);
+    let style = merge({marginLeft}, styles.row);
     return (
-      <select style={style}>
-        <option value="true">True</option>
-        <option value="false">False</option>
-      </select>
+      <div style={style}>
+        <div style={styles.label}>{key}</div>
+        <div style={styles.value}>
+          <select style={styles.select}>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+      </div>
     );
   }
 
   renderLabel(label, marginLeft){
-    let style = merge({marginLeft}, styles.label);
+    let style = merge({marginLeft}, styles.nestedLabel);
     return (
       <label style={style}>{label}</label>
     );
@@ -64,7 +73,6 @@ export default class JSONEditor extends React.Component{
       elems.push(this.renderLabel(prevKey, marginLeft));
       Object.keys(data).map(key => {
         this.recursiveParseData(key, data[key], elems, marginLeft + this.props.marginLeftStep);
-        elems.push(<br/>);
       })
     } else if(isNumber(data)){
       elems.push(this.renderNumber(prevKey, data, marginLeft));
@@ -78,12 +86,35 @@ export default class JSONEditor extends React.Component{
   render(){
     let elems = [];
     this.recursiveParseData('', this.props.data, elems, 0);
-    return <div>{elems}</div>
+    return <div style={styles.root}>{elems}</div>
   }
 }
 
 const styles = {
   label: {
-    color: "#2196F3"
+    color: "#2196F3",
+    width: "50%"
+  },
+  value: {
+    width: "50%"
+  },
+  row: {
+    display: "flex",
+    width: 150
+  },
+  root: {
+    margin: 5
+  },
+  nestedLabel: {
+    color: "#a52a2a"
+  },
+  select: {
+    borderRadius: 3,
+    borderColor: "rgba(0, 0, 0, 0)"
+  },
+  input: {
+    borderRadius: 3,
+    border: "1px solid #d3d3d3",
+    padding: 3
   }
 };

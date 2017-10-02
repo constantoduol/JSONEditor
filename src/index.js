@@ -11,14 +11,16 @@ ReactDOM.render(
     work: "engineer", 
     humans: {
       name: "brad", 
-      age: 30
+      age: 30,
+      isHuman: true
     },
     men: {
       we: "are",
       the: "men",
       women: {
         came: "from",
-        men: "also"
+        men: "also",
+        isWoman: true
       }
     }
   }}/>, 
