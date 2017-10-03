@@ -39,18 +39,20 @@ export default class JSONEditor extends React.Component {
 
     } else if(isNumber(data)){
       elems.push(
-        <_Number 
+        <_Input
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={prevKey} 
+          type="number"
           value={data}/>
       );
     } else if(isString(data)) {
       elems.push(
-        <_Text 
+        <_Input 
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={prevKey} 
+          type="text"
           value={data}/>
       );
     } else if(isBoolean(data)){
@@ -71,24 +73,9 @@ export default class JSONEditor extends React.Component {
   }
 }
 
-const _Text = (props) => {
-  let {marginLeft, marginBottom, label, value} = props;
-  let style = merge({marginLeft, marginBottom}, styles.row);
-  return (
-    <div style={style}>
-      <_Label 
-        value={label} 
-        marginLeft={0}
-        hasChildren={false}/>
-      <div style={styles.value}>
-        <input style={styles.input} type="text" value={value}/>
-      </div>
-    </div>
-  )
-}
 
-const _Number = (props) => {
-  let {marginLeft, marginBottom, label, value} = props;
+const _Input = (props) => {
+  let {marginLeft, marginBottom, label, value, type} = props;
   let style = merge({marginLeft, marginBottom}, styles.row);
   return (
     <div style={style}>
@@ -97,7 +84,7 @@ const _Number = (props) => {
         marginLeft={0}
         hasChildren={false}/>
       <div style={styles.value}>
-        <input style={styles.input} type="number" value={value}/>
+        <input style={styles.input} type={type} value={value}/>
       </div>
     </div>
   )
