@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import JSONEditor from './JSONEditor';
 import './index.css';
 
-ReactDOM.render(
-  <JSONEditor data={{
+let data = {
     name: "constant", 
     age: 20, 
     city: "nairobi", 
@@ -12,7 +11,8 @@ ReactDOM.render(
     humans: {
       name: "brad", 
       age: 30,
-      isHuman: true
+      isHuman: false,
+      greatest: ["mandela", "teresa", "luther"]
     },
     men: {
       we: "are",
@@ -23,6 +23,11 @@ ReactDOM.render(
         isWoman: true
       }
     }
-  }}/>, 
+};
+
+ReactDOM.render(
+  <JSONEditor data={data} onChange={(key, value, parent, data) => console.log(key, value, parent, data)}/>, 
   document.getElementById('root')
 );
+
+console.log(data);
