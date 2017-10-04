@@ -83,7 +83,7 @@ const Label = (props) => {
       break;
     case "boolean":
       style = styles.boolean;
-      value = value + ""; //corce boolean to string
+      value = value + ""; //corce boolean to string, seems you cant return booleans in react elements
       break;
     case "property":
       style = styles.property;
@@ -91,6 +91,7 @@ const Label = (props) => {
       break;
     default:
       style = styles.text;
+      value = "\"" + value + "\":"; //add quotes to string
   }
   style = merge({marginLeft}, style);
   return (
@@ -118,7 +119,7 @@ const styles = {
   row: {
     display: "flex",
     width: 150,
-    fontWeight: "bold"
+  
   },
   root: {
     margin: 5,
@@ -135,7 +136,6 @@ const styles = {
     color: "#a0a"
   },
   property: {
-    color: "#c00",
-    fontWeight: "bold"
+    color: "#c00"
   }
 };
