@@ -9,67 +9,88 @@ export default class JSONViewer extends React.Component {
     collapsed: true, //whether nodes are collapsed or not
   };
 
+  constructor(props){
+    super(props);
+    const data = {root: cloneDeep(props.data)};
+    this.state = {
+      data: data
+    };
+  }
+
   recursiveParseData(prevKey, parent, elems, marginLeft){
     //special case to check for root object
     //otherwise it would have been let data = parent[prevKey]
-    let data = prevKey !== null ? parent[prevKey] : parent; 
+    let isRoot = prevKey === '{';
+    let data = isRoot ? parent : parent[prevKey]; 
     if(isArray(data)){
       elems.push(
-        <Label 
-          value={prevKey} 
-          type="property"
-          marginLeft={marginLeft}
-          hasChildren/>
+        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft) //opening array tag
       );
 
       for(let key = 0; key < data.length; key++){
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
       }
 
-    } else if(isObject(data)){
+      elems.push(this.getLabel(']', 'builtin', marginLeft)); //closing array tag
 
-      elems.push(
-        <Label 
-          value={prevKey}
-          type="property" 
-          marginLeft={marginLeft}
-          hasChildren/>
-      );
+    } else if(isObject(data)){
+        elems.push(
+          this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft) //opening object tag
+        );
 
       Object.keys(data).map(key => {
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
       });
 
+      elems.push(this.getLabel('}', 'builtin', marginLeft)); //closing object tag
+
     } else if(isNumber(data)){
       elems.push(
-        <LabelAndValue 
-          label={prevKey}
-          value={data}
-          type="number" 
-          marginLeft={marginLeft}/>
+        this.getLabelAndValue(prevKey, data, parent, "number", marginLeft)
       );
     } else if(isString(data)) {
       elems.push(
-        <LabelAndValue 
-          label={prevKey}
-          value={data}
-          type="text" 
-          marginLeft={marginLeft}/>
+        this.getLabelAndValue(prevKey, data, parent, "text", marginLeft)
       );
     } else if(isBoolean(data)){
       elems.push(
+        this.getLabelAndValue(prevKey, data, parent, "boolean", marginLeft)
+      );
+    } else {
+      //null, undefined etc
+      elems.push(
+        this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft)
+      );
+    }
+  }
+
+  getLabelAndValue(key, value, parent, type, marginLeft){
+    if(isArray(parent)){
+      //for arrays we dont show keys
+      return this.getLabel(value, type, marginLeft);
+    } else {
+      return (
         <LabelAndValue 
-          label={prevKey}
-          value={data}
-          type="boolean" 
+          label={key}
+          value={value}
+          type={type} 
           marginLeft={marginLeft}/>
       );
     }
   }
 
+  getLabel(value, type, marginLeft){
+    return (
+      <Label 
+        value={value}
+        type={type} 
+        marginLeft={marginLeft}/>
+    )
+  }
+
   render(){
     let elems = [];
-    this.recursiveParseData(null, this.props.data, elems, 0);
+    this.recursiveParseData("root", this.state.data, elems, 0);
     return <div style={styles.root}>{elems}</div>
   }
 }
@@ -80,18 +101,26 @@ const Label = (props) => {
   switch(type){
     case "number":
       style = styles.number;
+      value = value + ",";
       break;
     case "boolean":
-      style = styles.boolean;
-      value = value + ""; //corce boolean to string, seems you cant return booleans in react elements
+      style = styles.builtin;
+      value = value + ","; //corce boolean to string, seems you cant return booleans in react elements
       break;
     case "property":
       style = styles.property;
       value = "\"" + value + "\":"; //add quotes to string
       break;
+    case "builtin":
+      style = styles.builtin;
+      if(value === "[" || value === "{")
+        value = value + "";
+      else
+        value = value + ","; //corce to string e.g null, undefined etc
+      break;
     default:
       style = styles.text;
-      value = "\"" + value + "\":"; //add quotes to string
+      value = "\"" + value + "\","; //add quotes to string
   }
   style = merge({marginLeft}, style);
   return (
@@ -117,16 +146,14 @@ const LabelAndValue = (props) => {
 
 const styles = {
   row: {
-    display: "flex",
-    width: 150,
-  
+    display: "flex" 
   },
   root: {
     margin: 5,
     fontSize: 12,
     fontFamily: "monospace"
   },
-  boolean: {
+  builtin: {
     color: "#00f"
   },
   text: {

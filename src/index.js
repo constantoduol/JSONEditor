@@ -7,6 +7,8 @@ import './index.css';
 let data = {
     name: "constant", 
     age: 20, 
+    people: null,
+    who: undefined,
     city: "nairobi", 
     work: "engineer", 
     humans: {
@@ -21,7 +23,8 @@ let data = {
       women: {
         came: "from",
         men: "also",
-        isWoman: true
+        isWoman: true,
+        run: null
       }
     }
 };
