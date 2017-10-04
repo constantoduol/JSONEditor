@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import JSONEditor from './JSONEditor';
+import JSONViewer from './JSONViewer';
 import './index.css';
 
 let data = {
@@ -12,7 +13,7 @@ let data = {
       name: "brad", 
       age: 30,
       isHuman: false,
-      greatest: ["mandela", "teresa", "luther"]
+      greatest: ["mandela", "teresa", {others: ['newton', 'einstein']}]
     },
     men: {
       we: "are",
@@ -26,7 +27,7 @@ let data = {
 };
 
 ReactDOM.render(
-  <JSONEditor data={data} onChange={(key, value, parent, data) => console.log(key, value, parent, data)}/>, 
+  <JSONViewer data={data} onChange={(key, value, parent, data) => console.log(key, value, parent, data)}/>, 
   document.getElementById('root')
 );
 

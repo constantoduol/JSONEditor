@@ -10,7 +10,8 @@ export default class JSONEditor extends React.Component {
     collapsed: true, //whether nodes are collapsed or not
     //this prevents modifying the data you passed in however cloning is expensive especially for large objects
     cloneData: true,
-    onChange: null //data changed handler 
+    onChange: null, //data changed handler,
+    view: "single" //dual, shows the editor and the json viewer side to side 
   }
 
   constructor(props){
