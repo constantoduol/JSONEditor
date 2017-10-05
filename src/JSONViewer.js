@@ -11,92 +11,99 @@ export default class JSONViewer extends React.Component {
 
   constructor(props){
     super(props);
-    const data = {root: cloneDeep(props.data)};
+    const data = {root: props.data};
     this.state = {
       data: data
     };
   }
 
-  recursiveParseData(prevKey, parent, elems, marginLeft){
+  recursiveParseData(prevKey, parent, elems, marginLeft, isLastSibling){
     //special case to check for root object
     //otherwise it would have been let data = parent[prevKey]
-    let isRoot = prevKey === '{';
-    let data = isRoot ? parent : parent[prevKey]; 
+    let data = parent[prevKey]; 
     if(isArray(data)){
       elems.push(
-        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft) //opening array tag
+        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, false) //opening array tag
       );
 
       for(let key = 0; key < data.length; key++){
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
+        isLastSibling = key === data.length - 1;
+        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
       }
 
-      elems.push(this.getLabel(']', 'builtin', marginLeft)); //closing array tag
+      elems.push(this.getLabel(']', 'builtin', marginLeft, isLastSibling)); //closing array tag
 
     } else if(isObject(data)){
-        elems.push(
-          this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft) //opening object tag
-        );
+      elems.push(
+        this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, false) //opening object tag
+      );
 
-      Object.keys(data).map(key => {
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
+      let keys = Object.keys(data);
+      let count = 0;
+      keys.map(key => {
+        if(count++ === keys.length) isLastSibling = true;
+        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
       });
 
-      elems.push(this.getLabel('}', 'builtin', marginLeft)); //closing object tag
+      elems.push(this.getLabel('}', 'builtin', marginLeft, isLastSibling)); //closing object tag
 
     } else if(isNumber(data)){
       elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "number", marginLeft)
+        this.getLabelAndValue(prevKey, data, parent, "number", marginLeft, isLastSibling)
       );
     } else if(isString(data)) {
       elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "text", marginLeft)
+        this.getLabelAndValue(prevKey, data, parent, "text", marginLeft, isLastSibling)
       );
     } else if(isBoolean(data)){
       elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "boolean", marginLeft)
+        this.getLabelAndValue(prevKey, data, parent, "boolean", marginLeft, isLastSibling)
       );
     } else {
       //null, undefined etc
       elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft)
+        this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft, isLastSibling)
       );
     }
   }
 
-  getLabelAndValue(key, value, parent, type, marginLeft){
+  getLabelAndValue(key, value, parent, type, marginLeft, isLastSibling){
+    //console.log(isLastSibling)
     if(isArray(parent)){
       //for arrays we dont show keys
-      return this.getLabel(value, type, marginLeft);
+      return this.getLabel(value, type, marginLeft, isLastSibling);
     } else {
       return (
         <LabelAndValue 
           label={key}
           value={value}
           type={type} 
-          marginLeft={marginLeft}/>
+          marginLeft={marginLeft}
+          isLastSibling={isLastSibling}/>
       );
     }
   }
 
-  getLabel(value, type, marginLeft){
+  getLabel(value, type, marginLeft, isLastSibling){
     return (
       <Label 
         value={value}
         type={type} 
-        marginLeft={marginLeft}/>
+        marginLeft={marginLeft}
+        isLastSibling={isLastSibling}/>
     )
   }
 
   render(){
     let elems = [];
-    this.recursiveParseData("root", this.state.data, elems, 0);
+    this.recursiveParseData("root", this.state.data, elems, 0, true);
     return <div style={styles.root}>{elems}</div>
   }
 }
 
 const Label = (props) => {
-  let {marginLeft, value, hasChildren, type} = props;
+  let {marginLeft, value, hasChildren, type, isLastSibling} = props;
+  console.log(isLastSibling)
   let style = styles.text;
   switch(type){
     case "number":
@@ -129,16 +136,19 @@ const Label = (props) => {
 }
 
 const LabelAndValue = (props) => {
-  let {label, marginLeft, type, value} = props;
+  let {label, marginLeft, type, value, isLastSibling} = props;
+  //console.log(isLastSibling)
   return (
     <div style={styles.row}>
       <Label 
         value={label}
         type="property" 
+        isLastSibling={isLastSibling}
         marginLeft={marginLeft}/>
       <Label 
         value={value}
         type={type}
+        isLastSibling={isLastSibling}
         marginLeft={5}/>
     </div>
   );
