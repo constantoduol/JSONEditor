@@ -33,7 +33,7 @@ let data = {
 };
 
 ReactDOM.render(
-  <JSONViewer data={data} onChange={(key, value, parent, data) => console.log(key, value, parent, data)}/>, 
+  <JSONEditor view="dual" data={data}/>, 
   document.getElementById('root')
 );
 

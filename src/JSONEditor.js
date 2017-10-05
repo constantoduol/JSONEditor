@@ -1,12 +1,13 @@
 import React from 'react';
 import {isArray, isObject, isNumber, isString, isBoolean, merge, cloneDeep} from 'lodash';
+import JSONViewer from './JSONViewer';
 
 export default class JSONEditor extends React.Component {
 
   static defaultProps = {
     data: {}, //data to edit
     marginLeftStep: 10, //indentation step for nested objects
-    marginBottom: 5, //margin bottom of nodes
+    marginBottom: 3, //margin bottom of nodes
     collapsed: true, //whether nodes are collapsed or not
     //this prevents modifying the data you passed in however cloning is expensive especially for large objects
     cloneData: true,
@@ -17,7 +18,7 @@ export default class JSONEditor extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data: props.cloneData ? cloneDeep(props.data) : props.data
+      data: {'root' : props.cloneData ? cloneDeep(props.data) : props.data}
     };
   }
 
@@ -42,15 +43,17 @@ export default class JSONEditor extends React.Component {
   }
 
   recursiveParseData(prevKey, parent, elems, marginLeft){
-    //special case to check for root object
-    //otherwise it would have been let data = parent[prevKey]
-    let data = prevKey !== null ? parent[prevKey] : parent; 
+    let data = parent[prevKey]; 
+    let label = prevKey;
+    if(isArray(parent)) {
+      label += 1;
+      label += "."
+    }
     if(isArray(data)){
       elems.push(
         <_Label 
-          value={prevKey} 
-          marginLeft={marginLeft}
-          hasChildren/>
+          value={label} 
+          marginLeft={marginLeft}/>
       );
 
       for(let key = 0; key < data.length; key++){
@@ -61,9 +64,8 @@ export default class JSONEditor extends React.Component {
 
       elems.push(
         <_Label 
-          value={prevKey} 
-          marginLeft={marginLeft}
-          hasChildren/>
+          value={label} 
+          marginLeft={marginLeft}/>
       );
 
       Object.keys(data).map(key => {
@@ -75,7 +77,7 @@ export default class JSONEditor extends React.Component {
         <_Input
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
-          label={prevKey} 
+          label={label} 
           type="number"
           onChange={this.dataChanged.bind(this, prevKey, parent, 'number')}
           value={data}/>
@@ -85,7 +87,7 @@ export default class JSONEditor extends React.Component {
         <_Input 
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
-          label={prevKey} 
+          label={label} 
           type="text"
           onChange={this.dataChanged.bind(this, prevKey, parent, 'text')}
           value={data}/>
@@ -96,7 +98,7 @@ export default class JSONEditor extends React.Component {
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           onChange={this.dataChanged.bind(this, prevKey, parent, 'boolean')}
-          label={prevKey} 
+          label={label} 
           value={data}/>
       );
     }
@@ -104,8 +106,21 @@ export default class JSONEditor extends React.Component {
 
   render(){
     let elems = [];
-    this.recursiveParseData(null, this.state.data, elems, 0);
-    return <div style={styles.root}>{elems}</div>
+    let {view} = this.props;
+    let {data} = this.state;
+    this.recursiveParseData('root', data, elems, 0);
+    if(view === "single"){
+      return <div style={styles.root}>{elems}</div>
+    } else if(view === "dual"){
+      return (
+        <div style={styles.dualView}>
+          <div style={styles.jsonEditor}>{elems}</div>
+          <div style={styles.jsonViewer}>
+            <JSONViewer data={data.root}/>
+          </div>
+        </div>
+      )
+    }
   }
 }
 
@@ -117,8 +132,7 @@ const _Input = (props) => {
     <div style={style}>
       <_Label 
         value={label} 
-        marginLeft={0}
-        hasChildren={false}/>
+        marginLeft={0}/>
       <div style={styles.value}>
         <input style={styles.input} type={type} value={value} onChange={onChange}/>
       </div>
@@ -133,8 +147,7 @@ const _Boolean = (props) => {
     <div style={style}>
       <_Label 
         value={label} 
-        marginLeft={0}
-        hasChildren={false}/>
+        marginLeft={0}/>
       <div style={styles.value}>
         <select style={styles.select} value={value} onChange={onChange}>
           <option value="true">True</option>
@@ -146,28 +159,42 @@ const _Boolean = (props) => {
 }
 
 const _Label = (props) => {
-  let {marginLeft, value, hasChildren} = props;
-  let style = hasChildren ? styles.withChildrenLabel : styles.label;
-  style = merge({marginLeft}, style);
+  let {marginLeft, value} = props;
+  let style = merge({marginLeft}, styles.label);
   return (
     <div style={style}>{value}</div>
   );
 }
 
 const styles = {
+  dualView: {
+    display: "flex"
+  },
+  jsonViewer: {
+    borderLeft: "1px solid lightgrey",
+    width: "50%",
+    margin: 10
+  },
+  jsonEditor: {
+    width: "50%",
+    fontSize: 12,
+    fontFamily: "monospace",
+    margin: 10
+  },
   label: {
-    color: "#00f",
-    width: "50%"
+    color: "#c00",
+    marginTop: 4
   },
   value: {
-    width: "50%"
+   marginLeft: 10
   },
   row: {
     display: "flex",
-    width: 150
+  
   },
   root: {
-    margin: 5
+    fontSize: 12,
+    fontFamily: "monospace"
   },
   withChildrenLabel: {
     color: "#a52a2a"

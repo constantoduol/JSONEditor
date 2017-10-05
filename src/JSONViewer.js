@@ -1,5 +1,5 @@
 import React from 'react';
-import {isArray, isObject, isNumber, isString, isBoolean, merge, cloneDeep} from 'lodash';
+import {isArray, isObject, isNumber, isString, isBoolean} from 'lodash';
 
 export default class JSONViewer extends React.Component {
   static defaultProps = {
@@ -39,7 +39,7 @@ export default class JSONViewer extends React.Component {
     let keys = Object.keys(data);
     let count = 0;
     let prevIsLastSibling = isLastSibling;
-    keys.map(key => {
+    keys.forEach(key => {
       isLastSibling = ++count === keys.length ? true : false;
       elems.push(<br/>);
       this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
@@ -136,7 +136,7 @@ const printSpaces = (marginLeft) => {
 };
 
 const Label = (props) => {
-  let {marginLeft, value, hasChildren, type, isLastSibling} = props;
+  let {marginLeft, value, type, isLastSibling} = props;
   let style = styles.text;
   switch(type){
     case "number":
