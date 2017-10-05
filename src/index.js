@@ -26,6 +26,9 @@ let data = {
         isWoman: true,
         run: null
       }
+    },
+    villains: {
+      name: 'constant'
     }
 };
 

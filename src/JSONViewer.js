@@ -4,8 +4,7 @@ import {isArray, isObject, isNumber, isString, isBoolean, merge, cloneDeep} from
 export default class JSONViewer extends React.Component {
   static defaultProps = {
     data: {}, //data to edit
-    marginLeftStep:15, //indentation step for nested objects
-    marginBottom: 5, //margin bottom of nodes
+    marginLeftStep:2, //no of spaces to the left per nested object
     collapsed: true, //whether nodes are collapsed or not
   };
 
@@ -17,53 +16,78 @@ export default class JSONViewer extends React.Component {
     };
   }
 
+  parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling){
+    elems.push(
+      this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true) //opening array tag
+    );
+
+    let prevIsLastSibling = isLastSibling;
+    for(let key = 0; key < data.length; key++){
+      isLastSibling = key === data.length - 1;
+      elems.push(<br/>);
+      this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
+    }
+    elems.push(<br/>);
+    elems.push(this.getLabel(']', 'builtin', marginLeft, prevIsLastSibling)); //closing array tag
+  }
+
+  parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling){
+    elems.push(
+      this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true) //opening object tag
+    );
+
+    let keys = Object.keys(data);
+    let count = 0;
+    let prevIsLastSibling = isLastSibling;
+    keys.map(key => {
+      isLastSibling = ++count === keys.length ? true : false;
+      elems.push(<br/>);
+      this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
+    });
+
+    elems.push(<br/>)
+    elems.push(this.getLabel('}', 'builtin', marginLeft, prevIsLastSibling)); //closing object tag
+  }
+
+  getDataType(data){
+    if(isArray(data)) return "array";
+    else if(isObject(data)) return "object";
+    else if(isNumber(data)) return "number";
+    else if(isString(data)) return "string";
+    else if(isBoolean(data)) return "boolean";
+    else return "builtin";
+  }
+
   recursiveParseData(prevKey, parent, elems, marginLeft, isLastSibling){
     //special case to check for root object
     //otherwise it would have been let data = parent[prevKey]
     let data = parent[prevKey]; 
-    if(isArray(data)){
-      elems.push(
-        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, false) //opening array tag
-      );
-
-      for(let key = 0; key < data.length; key++){
-        isLastSibling = key === data.length - 1;
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
-      }
-
-      elems.push(this.getLabel(']', 'builtin', marginLeft, isLastSibling)); //closing array tag
-
-    } else if(isObject(data)){
-      elems.push(
-        this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, false) //opening object tag
-      );
-
-      let keys = Object.keys(data);
-      let count = 0;
-      keys.map(key => {
-        if(count++ === keys.length) isLastSibling = true;
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
-      });
-
-      elems.push(this.getLabel('}', 'builtin', marginLeft, isLastSibling)); //closing object tag
-
-    } else if(isNumber(data)){
-      elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "number", marginLeft, isLastSibling)
-      );
-    } else if(isString(data)) {
-      elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "text", marginLeft, isLastSibling)
-      );
-    } else if(isBoolean(data)){
-      elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "boolean", marginLeft, isLastSibling)
-      );
-    } else {
-      //null, undefined etc
-      elems.push(
-        this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft, isLastSibling)
-      );
+    switch(this.getDataType(data)){
+      case "array":
+        this.parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling);
+        break;
+      case "object":
+        this.parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling);
+        break;
+      case "number":
+        elems.push(
+          this.getLabelAndValue(prevKey, data, parent, "number", marginLeft, isLastSibling)
+        );
+        break;
+      case "string":
+        elems.push(
+          this.getLabelAndValue(prevKey, data, parent, "text", marginLeft, isLastSibling)
+        );
+        break;
+      case "boolean":
+        elems.push(
+          this.getLabelAndValue(prevKey, data, parent, "boolean", marginLeft, isLastSibling)
+        );
+        break;
+      default:
+        elems.push(
+          this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft, isLastSibling)
+        );
     }
   }
 
@@ -101,18 +125,28 @@ export default class JSONViewer extends React.Component {
   }
 }
 
+const printSpaces = (marginLeft) => {
+  //we would have used css to set a margin left
+  //but that makes the json lose its formatting when copied
+  let spaces = [];
+  for(let x = 0; x < marginLeft; x++){
+    spaces.push(<span>&nbsp;</span>);
+  }
+  return <span>{spaces}</span>;
+};
+
 const Label = (props) => {
   let {marginLeft, value, hasChildren, type, isLastSibling} = props;
-  console.log(isLastSibling)
   let style = styles.text;
   switch(type){
     case "number":
       style = styles.number;
-      value = value + ",";
+      if(!isLastSibling) value = value + ",";
       break;
     case "boolean":
       style = styles.builtin;
-      value = value + ","; //corce boolean to string, seems you cant return booleans in react elements
+      value = value + ""; //coerce boolean to string, seems you cant return booleans in react elements
+      if(!isLastSibling) value = value + ",";
       break;
     case "property":
       style = styles.property;
@@ -120,26 +154,25 @@ const Label = (props) => {
       break;
     case "builtin":
       style = styles.builtin;
-      if(value === "[" || value === "{")
-        value = value + "";
-      else
-        value = value + ","; //corce to string e.g null, undefined etc
+      value = value + "";
+      if(!isLastSibling) value = value + ",";
       break;
     default:
       style = styles.text;
-      value = "\"" + value + "\","; //add quotes to string
+      if(isLastSibling)
+        value = "\"" + value + "\"";
+      else
+        value = "\"" + value + "\",";
   }
-  style = merge({marginLeft}, style);
   return (
-    <div style={style}>{value}</div>
+    <span style={style}>{printSpaces(marginLeft)}{value}</span>
   );
 }
 
 const LabelAndValue = (props) => {
   let {label, marginLeft, type, value, isLastSibling} = props;
-  //console.log(isLastSibling)
   return (
-    <div style={styles.row}>
+    <span>
       <Label 
         value={label}
         type="property" 
@@ -149,15 +182,12 @@ const LabelAndValue = (props) => {
         value={value}
         type={type}
         isLastSibling={isLastSibling}
-        marginLeft={5}/>
-    </div>
+        marginLeft={1}/>
+    </span>
   );
 }
 
 const styles = {
-  row: {
-    display: "flex" 
-  },
   root: {
     margin: 5,
     fontSize: 12,
