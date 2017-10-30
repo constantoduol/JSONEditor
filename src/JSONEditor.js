@@ -50,11 +50,13 @@ export default class JSONEditor extends React.Component {
       label += "."
     }
     if(isArray(data)){
-      elems.push(
-        <_Label 
-          value={label} 
-          marginLeft={marginLeft}/>
-      );
+      if(marginLeft > 0){ //special case to avoid showing root
+        elems.push(
+          <_Label 
+            value={label} 
+            marginLeft={marginLeft}/>
+        );
+      }
 
       for(let key = 0; key < data.length; key++){
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
@@ -62,11 +64,13 @@ export default class JSONEditor extends React.Component {
 
     } else if(isObject(data)){
 
-      elems.push(
-        <_Label 
-          value={label} 
-          marginLeft={marginLeft}/>
-      );
+      if(marginLeft > 0){//special case to avoid showing root
+        elems.push(
+          <_Label 
+            value={label} 
+            marginLeft={marginLeft}/>
+        );
+      }
 
       Object.keys(data).map(key => {
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
@@ -190,7 +194,6 @@ const styles = {
   },
   row: {
     display: "flex",
-  
   },
   root: {
     fontSize: 12,
