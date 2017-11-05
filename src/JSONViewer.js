@@ -40,7 +40,7 @@ export default class JSONViewer extends React.Component {
     let count = 0;
     let prevIsLastSibling = isLastSibling;
     keys.forEach(key => {
-      isLastSibling = ++count === keys.length ? true : false;
+      isLastSibling = ++count === keys.length;
       elems.push(<br/>);
       this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
     });

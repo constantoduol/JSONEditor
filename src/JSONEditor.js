@@ -8,7 +8,7 @@ export default class JSONEditor extends React.Component {
     data: {}, //data to edit
     marginLeftStep: 10, //indentation step for nested objects
     marginBottom: 3, //margin bottom of nodes
-    collapsed: true, //whether nodes are collapsed or not
+    collapsible: true, //whether nodes are collapsible or not
     //this prevents modifying the data you passed in however cloning is expensive especially for large objects
     cloneData: true,
     onChange: null, //data changed handler,
@@ -34,7 +34,7 @@ export default class JSONEditor extends React.Component {
       case "number":
         return Number(value);
       case "string":
-          return String(value);
+        return String(value);
       case "boolean":
         return value === "true" ? true : false;
       default:
