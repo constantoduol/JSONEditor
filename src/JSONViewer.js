@@ -1,31 +1,39 @@
 import React from 'react';
 import {isArray, isObject, isNumber, isString, isBoolean} from 'lodash';
+import {CollapseIcon, isNodeCollapsed, toggleNodeCollapsed} from './CollapseIcon';
 
 export default class JSONViewer extends React.Component {
   static defaultProps = {
     data: {}, //data to edit
-    marginLeftStep:2, //no of spaces to the left per nested object
-    collapsed: true, //whether nodes are collapsed or not
+    marginLeftStep: 2, //no of spaces to the left per nested object
+    collapsible: false, //whether nodes are collapsible or not
   };
 
   constructor(props){
     super(props);
     const data = {root: props.data};
     this.state = {
-      data: data
+      data: data,
+      collapsedNodes: {}
     };
   }
 
   parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling){
+    let {collapsible} = this.props;
+    let {collapsedNodes} = this.state;
     if(marginLeft > 0){
       elems.push(
-        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true) //opening array tag
+        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true), //opening array tag
+        this.getCollapseIcon(marginLeft, prevKey)
       );
     } else {
       elems.push(
-        this.getLabel("[", "builtin", marginLeft, true) //opening array tag
+        this.getLabel("[", "builtin", marginLeft, true), //opening array tag
+        this.getCollapseIcon(marginLeft, prevKey)
       );
     }
+    
+    if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
 
     let prevIsLastSibling = isLastSibling;
     for(let key = 0; key < data.length; key++){
@@ -38,16 +46,21 @@ export default class JSONViewer extends React.Component {
   }
 
   parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling){
-
+    let {collapsible} = this.props;
+    let {collapsedNodes} = this.state;
     if(marginLeft > 0){ //special case to avoid showing root
       elems.push(
-        this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true) //opening object tag
+        this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true), //opening object tag
+        this.getCollapseIcon(marginLeft, prevKey)
       );
     } else {
       elems.push(
-        this.getLabel("{", "builtin", marginLeft, true) //opening object tag
+        this.getLabel("{", "builtin", marginLeft, true), //opening object tag
+        this.getCollapseIcon(marginLeft, prevKey)
       );
     }
+
+    if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
 
     let keys = Object.keys(data);
     let count = 0;
@@ -102,6 +115,21 @@ export default class JSONViewer extends React.Component {
           this.getLabelAndValue(prevKey, data, parent, "builtin", marginLeft, isLastSibling)
         );
     }
+  }
+
+  getCollapseIcon(marginLeft, prevKey){
+    let {collapsedNodes} = this.state;
+    let {collapsible} = this.props;
+    return (
+      <CollapseIcon 
+        collapsedNodes={collapsedNodes} 
+        marginLeft={marginLeft} 
+        collapsible={collapsible} 
+        prevKey={prevKey}
+        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey)}
+        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey)}
+      />
+    )
   }
 
   getLabelAndValue(key, value, parent, type, marginLeft, isLastSibling){
@@ -216,5 +244,8 @@ const styles = {
   },
   property: {
     color: "#c00"
+  },
+  collapseIcon: {
+    cursor: "pointer"
   }
 };

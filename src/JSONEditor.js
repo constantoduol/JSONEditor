@@ -1,6 +1,7 @@
 import React from 'react';
 import {isArray, isObject, isNumber, isString, isBoolean, merge, cloneDeep} from 'lodash';
 import JSONViewer from './JSONViewer';
+import {CollapseIcon, isNodeCollapsed, toggleNodeCollapsed} from './CollapseIcon';
 
 export default class JSONEditor extends React.Component {
 
@@ -18,8 +19,24 @@ export default class JSONEditor extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data: {'root' : props.cloneData ? cloneDeep(props.data) : props.data}
+      data: {'root' : props.cloneData ? cloneDeep(props.data) : props.data},
+      collapsedNodes: {}
     };
+  }
+
+  getCollapseIcon(marginLeft, prevKey){
+    let {collapsedNodes} = this.state;
+    let {collapsible} = this.props;
+    return (
+      <CollapseIcon 
+        collapsedNodes={collapsedNodes} 
+        marginLeft={marginLeft} 
+        collapsible={collapsible} 
+        prevKey={prevKey}
+        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey)}
+        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey)}
+      />
+    )
   }
 
   dataChanged(key, parent, type, e){
@@ -54,9 +71,13 @@ export default class JSONEditor extends React.Component {
         elems.push(
           <_Label 
             value={label} 
-            marginLeft={marginLeft}/>
+            marginLeft={marginLeft}
+          />,
+          this.getCollapseIcon(marginLeft, prevKey)
         );
       }
+
+      if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
 
       for(let key = 0; key < data.length; key++){
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
@@ -68,10 +89,14 @@ export default class JSONEditor extends React.Component {
         elems.push(
           <_Label 
             value={label} 
-            marginLeft={marginLeft}/>
+            marginLeft={marginLeft}
+          />,
+          this.getCollapseIcon(marginLeft, prevKey)
         );
       }
 
+      if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
+      
       Object.keys(data).map(key => {
         this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
       });
@@ -110,7 +135,7 @@ export default class JSONEditor extends React.Component {
 
   render(){
     let elems = [];
-    let {view} = this.props;
+    let {view, collapsible} = this.props;
     let {data} = this.state;
     this.recursiveParseData('root', data, elems, 0);
     if(view === "single"){
@@ -120,7 +145,7 @@ export default class JSONEditor extends React.Component {
         <div style={styles.dualView}>
           <div style={styles.jsonEditor}>{elems}</div>
           <div style={styles.jsonViewer}>
-            <JSONViewer data={data.root}/>
+            <JSONViewer data={data.root} collapsible={collapsible}/>
           </div>
         </div>
       )
@@ -204,7 +229,7 @@ const styles = {
   },
   select: {
     borderRadius: 3,
-    borderColor: "rgba(0, 0, 0, 0)"
+    borderColor: "#d3d3d3"
   },
   input: {
     borderRadius: 3,
