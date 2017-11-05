@@ -17,9 +17,15 @@ export default class JSONViewer extends React.Component {
   }
 
   parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    elems.push(
-      this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true) //opening array tag
-    );
+    if(marginLeft > 0){
+      elems.push(
+        this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true) //opening array tag
+      );
+    } else {
+      elems.push(
+        this.getLabel("[", "builtin", marginLeft, true) //opening array tag
+      );
+    }
 
     let prevIsLastSibling = isLastSibling;
     for(let key = 0; key < data.length; key++){
@@ -32,9 +38,16 @@ export default class JSONViewer extends React.Component {
   }
 
   parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    elems.push(
-      this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true) //opening object tag
-    );
+
+    if(marginLeft > 0){ //special case to avoid showing root
+      elems.push(
+        this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true) //opening object tag
+      );
+    } else {
+      elems.push(
+        this.getLabel("{", "builtin", marginLeft, true) //opening object tag
+      );
+    }
 
     let keys = Object.keys(data);
     let count = 0;
@@ -92,7 +105,6 @@ export default class JSONViewer extends React.Component {
   }
 
   getLabelAndValue(key, value, parent, type, marginLeft, isLastSibling){
-    //console.log(isLastSibling)
     if(isArray(parent)){
       //for arrays we dont show keys
       return this.getLabel(value, type, marginLeft, isLastSibling);
