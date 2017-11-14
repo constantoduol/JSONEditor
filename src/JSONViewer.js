@@ -7,6 +7,7 @@ export default class JSONViewer extends React.Component {
     data: {}, //data to edit
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
+    collapsedNodes: {}
   };
 
   constructor(props){
@@ -14,12 +15,12 @@ export default class JSONViewer extends React.Component {
     const data = {root: props.data};
     this.state = {
       data: data,
-      collapsedNodes: {}
+      collapsedNodes: this.props.collapsedNodes
     };
   }
 
   parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    let {collapsible} = this.props;
+    let {collapsible, marginLeftStep} = this.props;
     let {collapsedNodes} = this.state;
     if(marginLeft > 0){
       elems.push(
@@ -33,20 +34,20 @@ export default class JSONViewer extends React.Component {
       );
     }
     
-    if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
+    if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
 
     let prevIsLastSibling = isLastSibling;
     for(let key = 0; key < data.length; key++){
       isLastSibling = key === data.length - 1;
       elems.push(<br/>);
-      this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
+      this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep, isLastSibling);
     }
     elems.push(<br/>);
     elems.push(this.getLabel(']', 'builtin', marginLeft, prevIsLastSibling)); //closing array tag
   }
 
   parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    let {collapsible} = this.props;
+    let {collapsible, marginLeftStep} = this.props;
     let {collapsedNodes} = this.state;
     if(marginLeft > 0){ //special case to avoid showing root
       elems.push(
@@ -60,7 +61,7 @@ export default class JSONViewer extends React.Component {
       );
     }
 
-    if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
+    if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
 
     let keys = Object.keys(data);
     let count = 0;
@@ -68,7 +69,7 @@ export default class JSONViewer extends React.Component {
     keys.forEach(key => {
       isLastSibling = ++count === keys.length;
       elems.push(<br/>);
-      this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep, isLastSibling);
+      this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep, isLastSibling);
     });
 
     elems.push(<br/>)
@@ -119,15 +120,15 @@ export default class JSONViewer extends React.Component {
 
   getCollapseIcon(marginLeft, prevKey){
     let {collapsedNodes} = this.state;
-    let {collapsible} = this.props;
+    let {collapsible, marginLeftStep} = this.props;
     return (
       <CollapseIcon 
         collapsedNodes={collapsedNodes} 
         marginLeft={marginLeft} 
         collapsible={collapsible} 
         prevKey={prevKey}
-        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey)}
-        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey)}
+        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
+        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
       />
     )
   }

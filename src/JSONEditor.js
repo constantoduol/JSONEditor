@@ -13,28 +13,30 @@ export default class JSONEditor extends React.Component {
     //this prevents modifying the data you passed in however cloning is expensive especially for large objects
     cloneData: true,
     onChange: null, //data changed handler,
-    view: "single" //dual, shows the editor and the json viewer side to side 
+    view: "single", //dual, shows the editor and the json viewer side to side,
+    collapsedNodes: {},
+    synchronizedCollapse: true //if in dual view when editor is collapsed, viewer is also collapsed 
   }
 
   constructor(props){
     super(props);
     this.state = {
       data: {'root' : props.cloneData ? cloneDeep(props.data) : props.data},
-      collapsedNodes: {}
+      collapsedNodes: this.props.collapsedNodes
     };
   }
 
   getCollapseIcon(marginLeft, prevKey){
     let {collapsedNodes} = this.state;
-    let {collapsible} = this.props;
+    let {collapsible, marginLeftStep} = this.props;
     return (
       <CollapseIcon 
         collapsedNodes={collapsedNodes} 
         marginLeft={marginLeft} 
         collapsible={collapsible} 
         prevKey={prevKey}
-        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey)}
-        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey)}
+        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
+        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
       />
     )
   }
@@ -62,6 +64,7 @@ export default class JSONEditor extends React.Component {
   recursiveParseData(prevKey, parent, elems, marginLeft){
     let data = parent[prevKey]; 
     let label = prevKey;
+    let {marginLeftStep} = this.props;
     if(isArray(parent)) {
       label += 1;
       label += "."
@@ -69,36 +72,38 @@ export default class JSONEditor extends React.Component {
     if(isArray(data)){
       if(marginLeft > 0){ //special case to avoid showing root
         elems.push(
-          <_Label 
+          <_ParentLabel 
             value={label} 
             marginLeft={marginLeft}
-          />,
-          this.getCollapseIcon(marginLeft, prevKey)
+            prevKey={prevKey}
+            getCollapseIcon={this.getCollapseIcon.bind(this)}
+          />
         );
       }
 
-      if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
+      if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
 
       for(let key = 0; key < data.length; key++){
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
+        this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep);
       }
 
     } else if(isObject(data)){
 
       if(marginLeft > 0){//special case to avoid showing root
         elems.push(
-          <_Label 
+          <_ParentLabel 
             value={label} 
             marginLeft={marginLeft}
-          />,
-          this.getCollapseIcon(marginLeft, prevKey)
+            prevKey={prevKey}
+            getCollapseIcon={this.getCollapseIcon.bind(this)}
+          />
         );
       }
 
-      if(isNodeCollapsed.call(this, marginLeft, prevKey)) return; //this node is collapsed
+      if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
       
       Object.keys(data).map(key => {
-        this.recursiveParseData(key, data, elems, marginLeft + this.props.marginLeftStep);
+        this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep);
       });
 
     } else if(isNumber(data)){
@@ -135,8 +140,8 @@ export default class JSONEditor extends React.Component {
 
   render(){
     let elems = [];
-    let {view, collapsible} = this.props;
-    let {data} = this.state;
+    let {view, collapsible, synchronizedCollapse} = this.props;
+    let {data, collapsedNodes} = this.state;
     this.recursiveParseData('root', data, elems, 0);
     if(view === "single"){
       return <div style={styles.root}>{elems}</div>
@@ -145,7 +150,10 @@ export default class JSONEditor extends React.Component {
         <div style={styles.dualView}>
           <div style={styles.jsonEditor}>{elems}</div>
           <div style={styles.jsonViewer}>
-            <JSONViewer data={data.root} collapsible={collapsible}/>
+            <JSONViewer 
+              data={data.root} 
+              collapsible={collapsible} 
+              collapsedNodes={synchronizedCollapse ? collapsedNodes : {}}/>
           </div>
         </div>
       )
@@ -192,6 +200,17 @@ const _Label = (props) => {
   let style = merge({marginLeft}, styles.label);
   return (
     <div style={style}>{value}</div>
+  );
+}
+
+const _ParentLabel = (props) => {
+  let {marginLeft, value, prevKey, getCollapseIcon} = props;
+  let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
+  return (
+    <div style={style}>
+      <div>{value}</div>
+      <div style={{marginLeft: 5}}>{getCollapseIcon(marginLeft, prevKey)}</div>
+    </div>
   );
 }
 

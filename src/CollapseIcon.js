@@ -12,21 +12,23 @@ const CollapseIcon = (props) => {
       style={styles.collapseIcon}>&#9660;</span>
 }
 
-function toggleNodeCollapsed(marginLeft, key) {
+function toggleNodeCollapsed(marginLeft, key, marginLeftStep) {
   let {collapsedNodes} = this.state;
-  let keys = collapsedNodes[marginLeft] || {};
+  let level = marginLeft/marginLeftStep;
+  let keys = collapsedNodes[level] || {};
 
   if(keys[key]) delete keys[key]; //keys[key] = false ?
   else keys[key] = true;
-  collapsedNodes[marginLeft] = keys;
+  collapsedNodes[level] = keys;
 
   this.setState({collapsedNodes});
 }
 
-function isNodeCollapsed(marginLeft, key) {
+function isNodeCollapsed(marginLeft, key, marginLeftStep) {
   let {collapsedNodes} = this.state;
-  if(!collapsedNodes[marginLeft]) return false;
-  return collapsedNodes[marginLeft][key];
+  let level = marginLeft/marginLeftStep;
+  if(!collapsedNodes[level]) return false;
+  return collapsedNodes[level][key];
 }
 
 const styles = {

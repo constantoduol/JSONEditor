@@ -32,6 +32,8 @@ let data = {
     }
 };
 
+data = ["constant", "oduol", "is", "here", {"but": "he", "does": "not", "have": "much", "to": "say"}]
+
 ReactDOM.render(
   <JSONEditor view="dual" data={data}/>, 
   document.getElementById('root')
