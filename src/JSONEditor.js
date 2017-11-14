@@ -72,7 +72,7 @@ export default class JSONEditor extends React.Component {
     if(isArray(data)){
       if(marginLeft > 0){ //special case to avoid showing root
         elems.push(
-          <_ParentLabel 
+          <ParentLabel 
             value={label} 
             marginLeft={marginLeft}
             prevKey={prevKey}
@@ -91,7 +91,7 @@ export default class JSONEditor extends React.Component {
 
       if(marginLeft > 0){//special case to avoid showing root
         elems.push(
-          <_ParentLabel 
+          <ParentLabel 
             value={label} 
             marginLeft={marginLeft}
             prevKey={prevKey}
@@ -108,7 +108,7 @@ export default class JSONEditor extends React.Component {
 
     } else if(isNumber(data)){
       elems.push(
-        <_Input
+        <Input
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={label} 
@@ -118,7 +118,7 @@ export default class JSONEditor extends React.Component {
       );
     } else if(isString(data)) {
       elems.push(
-        <_Input 
+        <Input 
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={label} 
@@ -128,7 +128,7 @@ export default class JSONEditor extends React.Component {
       );
     } else if(isBoolean(data)){
       elems.push(
-        <_Boolean 
+        <Boolean 
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           onChange={this.dataChanged.bind(this, prevKey, parent, 'boolean')}
@@ -162,12 +162,12 @@ export default class JSONEditor extends React.Component {
 }
 
 
-const _Input = (props) => {
+const Input = (props) => {
   let {marginLeft, marginBottom, label, value, type, onChange} = props;
   let style = merge({marginLeft, marginBottom}, styles.row);
   return (
     <div style={style}>
-      <_Label 
+      <Label 
         value={label} 
         marginLeft={0}/>
       <div style={styles.value}>
@@ -177,12 +177,12 @@ const _Input = (props) => {
   )
 }
 
-const _Boolean = (props) => {
+const Boolean = (props) => {  //Boolean is reserved in javascript, rename to _Boolean?
   let {marginLeft, marginBottom, label, value, onChange} = props;
   let style = merge({marginLeft, marginBottom}, styles.row);
   return (
     <div style={style}>
-      <_Label 
+      <Label 
         value={label} 
         marginLeft={0}/>
       <div style={styles.value}>
@@ -195,7 +195,7 @@ const _Boolean = (props) => {
   );
 }
 
-const _Label = (props) => {
+const Label = (props) => {
   let {marginLeft, value} = props;
   let style = merge({marginLeft}, styles.label);
   return (
@@ -203,7 +203,7 @@ const _Label = (props) => {
   );
 }
 
-const _ParentLabel = (props) => {
+const ParentLabel = (props) => {
   let {marginLeft, value, prevKey, getCollapseIcon} = props;
   let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
   return (
