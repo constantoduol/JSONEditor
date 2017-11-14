@@ -20,8 +20,7 @@ export default class JSONViewer extends React.Component {
   }
 
   parseArray(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    let {collapsible, marginLeftStep} = this.props;
-    let {collapsedNodes} = this.state;
+    let {marginLeftStep} = this.props;
     if(marginLeft > 0){
       elems.push(
         this.getLabelAndValue(prevKey, "[", parent, "builtin", marginLeft, true), //opening array tag
@@ -47,8 +46,7 @@ export default class JSONViewer extends React.Component {
   }
 
   parseObject(prevKey, data, parent, elems, marginLeft, isLastSibling){
-    let {collapsible, marginLeftStep} = this.props;
-    let {collapsedNodes} = this.state;
+    let {marginLeftStep} = this.props;
     if(marginLeft > 0){ //special case to avoid showing root
       elems.push(
         this.getLabelAndValue(prevKey, "{", parent, "builtin", marginLeft, true), //opening object tag
