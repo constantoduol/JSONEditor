@@ -1,3 +1,7 @@
+### Getting started
+
+`npm install react-json-editor-viewer`
+
 ### Easily view json in react
 
 ```javascript
@@ -106,3 +110,5 @@ onJsonChange(key, value, parent, data){
 ```
 ![Alt text](images/jsoneditor_dual.png?raw=true "JSON Viewer")
 
+
+### License: MIT
