@@ -1,8 +1,4 @@
-import Example from './components/Example';
-import SecondExample from './components/SecondExample';
+import JSONEditor from './JSONEditor';
+import JSONViewer from './JSONViewer';
 
-export default Example;
-export {
-  SecondExample
-};
-
+export {JSONEditor, JSONViewer};

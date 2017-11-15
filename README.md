@@ -1,64 +1,104 @@
-# React NPM library starter kit
 
-[![Build Status](https://travis-ci.org/UdiliaInc/create-react-library.svg?branch=master)](https://travis-ci.org/UdiliaInc/create-react-library)
-[![Dependencies](https://img.shields.io/david/udiliaInc/create-react-library.svg)]()
-[![Dev Dependencies](https://img.shields.io/david/dev/udiliaInc/create-react-library.svg)]()
+### Easily view json in react
 
-based on Facebook's <a href="https://github.com/facebookincubator/create-react-app" target="_blank">Create react app</a>
+```javascript
+import {JSONViewer} from 'react-json-editor-viewer';
 
-## Converted to custom setup
 
-Moved all dependencies to dev dependencies because we don't need extra dependencies for our library after build, but we want all this features while developing one: 
 
-* Compile SCSS to css
-* React, JSX, ES6, and Flow syntax support.
-* Language extras beyond ES6 like the object spread operator.
-* A dev server that lints for common errors.
-* Import CSS and image files directly from JavaScript.
-* Autoprefixed CSS, so you don’t need `-webkit` or other prefixes.
-* A `build` script to bundle JS, CSS, and images for production.
+<JSONViewer 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+/>
 
-## Getting Started
+```
 
-Clone repo
+### Make your json viewer collapsible
 
-````
-git clone https://github.com/udiliaInc/create-react-library.git
-````
+```javascript
+import {JSONViewer} from 'react-json-editor-viewer';
 
-Install dependencies
+<JSONViewer 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+/>
+```
 
-`npm install` or `yarn install`
+### Edit json easily and listen to changes in the data
 
-Start development server
+```javascript
+import {JSONEditor} from 'react-json-editor-viewer';
 
-`npm start` or `yarn start`
+constructor(){
+	this.onJsonChange = this.onJsonChange.bind(this);
+}
 
-Runs the demo app in development mode.
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+onJsonChange(key, value, parent, data){
+	console.log(key, value, parent, data);
+}
 
-## Library files
+<JSONEditor 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+  onChange={this.onJsonChange}
+/>
+```
 
-All library files are located inside `src/lib`  
+### View both the json editor and viewer side by side
 
-## Demo app
 
-Is located inside `src/demo` directory, here you can test your library while developing
+```javascript
+import {JSONEditor} from 'react-json-editor-viewer';
 
-## Testing
+constructor(){
+	this.onJsonChange = this.onJsonChange.bind(this);
+}
 
-`npm run test` or `yarn run test`
+onJsonChange(key, value, parent, data){
+	console.log(key, value, parent, data);
+}
 
-## Build library
+<JSONEditor 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+  onChange={this.onJsonChange}
+  view="dual"
+/>
+```
 
-`npm run build` or `yarn run build`
 
-Produces production version of library under the `build` folder.
-
-## Publish library
-
-`npm publish`
-
-## Example library built with this starter kit
-
-https://github.com/UdiliaInc/react-under-construction
