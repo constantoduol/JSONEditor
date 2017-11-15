@@ -19,6 +19,7 @@ import {JSONViewer} from 'react-json-editor-viewer';
 />
 
 ```
+![Alt text](images/jsonviewer.png?raw=true "JSON Viewer")
 
 ### Make your json viewer collapsible
 
@@ -40,17 +41,19 @@ import {JSONViewer} from 'react-json-editor-viewer';
 />
 ```
 
+![Alt text](images/jsonviewer_collapse.png?raw=true "JSON Viewer")
+
 ### Edit json easily and listen to changes in the data
 
 ```javascript
 import {JSONEditor} from 'react-json-editor-viewer';
 
 constructor(){
-	this.onJsonChange = this.onJsonChange.bind(this);
+  this.onJsonChange = this.onJsonChange.bind(this);
 }
 
 onJsonChange(key, value, parent, data){
-	console.log(key, value, parent, data);
+  console.log(key, value, parent, data);
 }
 
 <JSONEditor 
@@ -69,6 +72,8 @@ onJsonChange(key, value, parent, data){
 />
 ```
 
+![Alt text](images/jsoneditor.png?raw=true "JSON Viewer")
+
 ### View both the json editor and viewer side by side
 
 
@@ -76,11 +81,11 @@ onJsonChange(key, value, parent, data){
 import {JSONEditor} from 'react-json-editor-viewer';
 
 constructor(){
-	this.onJsonChange = this.onJsonChange.bind(this);
+  this.onJsonChange = this.onJsonChange.bind(this);
 }
 
 onJsonChange(key, value, parent, data){
-	console.log(key, value, parent, data);
+  console.log(key, value, parent, data);
 }
 
 <JSONEditor 
@@ -99,5 +104,5 @@ onJsonChange(key, value, parent, data){
   view="dual"
 />
 ```
-
+![Alt text](images/jsoneditor_dual.png?raw=true "JSON Viewer")
 
