@@ -45,7 +45,7 @@ export default class JSONEditor extends React.Component {
     let value = this.castToType(e.target.value, type);
     parent[key] = value;
     this.setState(this.state.data);
-    if(this.props.onChange) this.props.onChange(key, value, parent, this.state.data);
+    if(this.props.onChange) this.props.onChange(key, value, parent, this.state.data.root);
   }
 
   castToType(value, type){
