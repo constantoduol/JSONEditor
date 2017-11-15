@@ -1,4 +1,3 @@
-
 ### Easily view json in react
 
 ```javascript
