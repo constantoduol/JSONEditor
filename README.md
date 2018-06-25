@@ -1,64 +1,114 @@
-# React NPM library starter kit
+### Getting started
 
-[![Build Status](https://travis-ci.org/DimiMikadze/create-react-library.svg?branch=master)](https://travis-ci.org/DimiMikadze/create-react-library)
-[![Dependencies](https://img.shields.io/david/DimiMikadze/create-react-library.svg)]()
-[![Dev Dependencies](https://img.shields.io/david/dev/DimiMikadze/create-react-library.svg)]()
+`npm install react-json-editor-viewer`
 
-based on Facebook's <a href="https://github.com/facebookincubator/create-react-app" target="_blank">Create react app</a>.
-We are constantly updating repository with the updates of `create-react-app`, so we have all new features and bug fixes of it.
+### Easily view json in react
 
-## Converted to custom setup
+```javascript
+import {JSONViewer} from 'react-json-editor-viewer';
 
-Moved all dependencies to dev dependencies because we don't need extra dependencies for our library after build, but we want all this features while developing: 
 
-* React, JSX, ES6, and Flow syntax support.
-* Language extras beyond ES6 like the object spread operator.
-* A dev server that lints for common errors.
-* Import CSS and image files directly from JavaScript.
-* Autoprefixed CSS, so you don’t need `-webkit` or other prefixes.
-* A `build` script to bundle JS, CSS, and images for production.
 
-## Getting Started
+<JSONViewer 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+/>
 
-Clone repo
+```
+![Alt text](images/jsonviewer.png?raw=true "JSON Viewer")
 
-````
-git clone https://github.com/DimiMikadze/create-react-library.git
-````
+### Make your json viewer collapsible
 
-Install dependencies
+```javascript
+import {JSONViewer} from 'react-json-editor-viewer';
 
-`npm install` or `yarn install`
+<JSONViewer 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+/>
+```
 
-Start development server
+![Alt text](images/jsonviewer_collapse.png?raw=true "JSON Viewer")
 
-`npm start` or `yarn start`
+### Edit json easily and listen to changes in the data
 
-Runs the demo app in development mode.
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```javascript
+import {JSONEditor} from 'react-json-editor-viewer';
 
-## Library files
+constructor(){
+  this.onJsonChange = this.onJsonChange.bind(this);
+}
 
-All library files are located inside `src/lib`  
+onJsonChange(key, value, parent, data){
+  console.log(key, value, parent, data);
+}
 
-## Demo app
+<JSONEditor 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+  onChange={this.onJsonChange}
+/>
+```
 
-Is located inside `src/demo` directory, here you can test your library while developing
+![Alt text](images/jsoneditor.png?raw=true "JSON Viewer")
 
-## Testing
+### View both the json editor and viewer side by side
 
-`npm run test` or `yarn run test`
 
-## Build library
+```javascript
+import {JSONEditor} from 'react-json-editor-viewer';
 
-`npm run build` or `yarn run build`
+constructor(){
+  this.onJsonChange = this.onJsonChange.bind(this);
+}
 
-Produces production version of library under the `build` folder.
+onJsonChange(key, value, parent, data){
+  console.log(key, value, parent, data);
+}
 
-## Publish library
+<JSONEditor 
+  data={{
+    the: "men",
+    that: "landed",
+    on: "the",
+    moon: "were",
+    maybe: 2,
+    i: "think",
+    probably: ["neil armstrong", "buzz aldrin"],
+    am_i_right: true
+  }}
+  collapsible
+  onChange={this.onJsonChange}
+  view="dual"
+/>
+```
+![Alt text](images/jsoneditor_dual.png?raw=true "JSON Viewer")
 
-`npm publish`
 
-## Example library built with this starter kit
-
-https://github.com/DimiMikadze/react-under-construction
+### License: MIT

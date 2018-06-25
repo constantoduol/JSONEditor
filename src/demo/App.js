@@ -1,11 +1,34 @@
 import React from 'react';
-import Example from '../lib';
-import { SecondExample } from '../lib';
+import {JSONViewer, JSONEditor} from '../lib';
 
 const App = () => (
   <div>
-    <Example />
-    <SecondExample />
+    <JSONViewer 
+      data={{
+        the: "men",
+        that: "landed",
+        on: "the",
+        moon: "were",
+        maybe: 2,
+        i: "think",
+        probably: ["neil armstrong", "buzz aldrin"],
+        am_i_right: true
+      }}
+    />
+    <JSONEditor 
+      data={{
+        the: "men",
+        that: "landed",
+        on: "the",
+        moon: "were",
+        maybe: 2,
+        i: "think",
+        probably: ["neil armstrong", "buzz aldrin"],
+        am_i_right: true
+      }}
+      collapsible
+      onChange={this.onJsonChange}
+    />
   </div>
 );
 
