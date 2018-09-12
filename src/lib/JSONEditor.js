@@ -26,7 +26,7 @@ export default class JSONEditor extends React.Component {
     };
   }
 
-  getCollapseIcon(marginLeft, prevKey){
+  getCollapseIcon(marginLeft, currentKey){
     let {collapsedNodes} = this.state;
     let {collapsible, marginLeftStep} = this.props;
     return (
@@ -34,9 +34,9 @@ export default class JSONEditor extends React.Component {
         collapsedNodes={collapsedNodes} 
         marginLeft={marginLeft} 
         collapsible={collapsible} 
-        prevKey={prevKey}
-        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
-        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, prevKey, marginLeftStep)}
+        currentKey={currentKey}
+        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
+        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
       />
     )
   }
@@ -61,9 +61,10 @@ export default class JSONEditor extends React.Component {
     }
   }
 
-  recursiveParseData(prevKey, parent, elems, marginLeft){
-    let data = parent[prevKey]; 
-    let label = prevKey;
+  recursiveParseData(currentKey, parentKeyPath, parent, elems, marginLeft){
+    parentKeyPath = parentKeyPath + "_" + currentKey
+    let data = parent[currentKey]; 
+    let label = currentKey;
     let {marginLeftStep} = this.props;
     if(isArray(parent)) {
       label += 1;
@@ -72,66 +73,71 @@ export default class JSONEditor extends React.Component {
     if(isArray(data)){
       if(marginLeft > 0){ //special case to avoid showing root
         elems.push(
-          <ParentLabel 
+          <ParentLabel
+            key={getKey('parent_label', currentKey, parentKeyPath, marginLeft)} 
             value={label} 
             marginLeft={marginLeft}
-            prevKey={prevKey}
+            currentKey={currentKey}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
           />
         );
       }
 
-      if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
+      if(isNodeCollapsed.call(this, marginLeft, currentKey, marginLeftStep)) return; //this node is collapsed
 
       for(let key = 0; key < data.length; key++){
-        this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep);
+        this.recursiveParseData(key, parentKeyPath, data, elems, marginLeft + marginLeftStep);
       }
 
     } else if(isObject(data)){
 
       if(marginLeft > 0){//special case to avoid showing root
         elems.push(
-          <ParentLabel 
+          <ParentLabel
+            key={getKey('parent_label', currentKey, parentKeyPath, marginLeft)}  
             value={label} 
             marginLeft={marginLeft}
-            prevKey={prevKey}
+            currentKey={currentKey}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
           />
         );
       }
 
-      if(isNodeCollapsed.call(this, marginLeft, prevKey, marginLeftStep)) return; //this node is collapsed
+      if(isNodeCollapsed.call(this, marginLeft, currentKey, marginLeftStep)) return; //this node is collapsed
       
       Object.keys(data).forEach(key => {
-        this.recursiveParseData(key, data, elems, marginLeft + marginLeftStep);
+        this.recursiveParseData(key, parentKeyPath, data, elems, marginLeft + marginLeftStep);
       });
 
     } else if(isNumber(data)){
       elems.push(
         <Input
+          key={getKey('input', currentKey, parentKeyPath, marginLeft)}  
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={label} 
           type="number"
-          onChange={this.dataChanged.bind(this, prevKey, parent, 'number')}
+          onChange={this.dataChanged.bind(this, currentKey, parent, 'number')}
           value={data}/>
       );
     } else if(isString(data)) {
       elems.push(
         <Input 
+          key={getKey('input', currentKey, parentKeyPath, marginLeft)}  
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           label={label} 
           type="text"
-          onChange={this.dataChanged.bind(this, prevKey, parent, 'text')}
+          onChange={this.dataChanged.bind(this, currentKey, parent, 'text')}
           value={data}/>
       );
     } else if(isBoolean(data)){
       elems.push(
         <Boolean 
+          key={getKey('boolean', currentKey, parentKeyPath, marginLeft)} 
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
-          onChange={this.dataChanged.bind(this, prevKey, parent, 'boolean')}
+          onChange={this.dataChanged.bind(this, currentKey, parent, 'boolean')}
           label={label} 
           value={data}/>
       );
@@ -142,7 +148,7 @@ export default class JSONEditor extends React.Component {
     let elems = [];
     let {view, collapsible, synchronizedCollapse} = this.props;
     let {data, collapsedNodes} = this.state;
-    this.recursiveParseData('root', data, elems, 0);
+    this.recursiveParseData('root', '', data, elems, 0);
     if(view === "single"){
       return <div style={styles.root}>{elems}</div>
     } else if(view === "dual"){
@@ -204,14 +210,18 @@ const Label = (props) => {
 }
 
 const ParentLabel = (props) => {
-  let {marginLeft, value, prevKey, getCollapseIcon} = props;
+  let {marginLeft, value, currentKey, getCollapseIcon} = props;
   let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
   return (
     <div style={style}>
       <div>{value}</div>
-      <div style={{marginLeft: 5}}>{getCollapseIcon(marginLeft, prevKey)}</div>
+      <div style={{marginLeft: 5}}>{getCollapseIcon(marginLeft, currentKey)}</div>
     </div>
   );
+}
+
+const getKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
+  return `${prefix}_${parentKeyPath}_${currentKey}_${marginLeft}`
 }
 
 const styles = {
