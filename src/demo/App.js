@@ -1,6 +1,8 @@
 import React from 'react';
 import {JSONViewer, JSONEditor} from '../lib';
-
+// npm run build
+// to compile a production version
+//npm publish to publish
 const App = () => (
   <div>
     <JSONEditor 

@@ -7,7 +7,9 @@ export default class JSONViewer extends React.Component {
     data: {}, //data to edit
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
-    collapsedNodes: {}
+    collapsedNodes: {},
+    showAddNewButton: true,
+    showRemoveButton: true
   };
 
   constructor(props){
@@ -17,6 +19,9 @@ export default class JSONViewer extends React.Component {
       data: data,
       collapsedNodes: this.props.collapsedNodes
     };
+
+    this.addElement = this.addElement.bind(this);
+    this.removeElement = this.removeElement.bind(this);
   }
 
   parseArray(currentKey, parentKeyPath, data, parent, elems, marginLeft, isLastSibling){
@@ -86,11 +91,25 @@ export default class JSONViewer extends React.Component {
     else return "builtin";
   }
 
+  addElement(parent){
+    let randomKey = Math.floor(Math.random() * 100000000);
+    parent[randomKey] = "hello world"
+    this.setState({data: this.state.data});
+    // if(this.props.onChange) this.props.onChange(randomKey, currentValue, parent, this.state.data);
+  }
+
+  removeElement(parent, removeKey){
+    let currentValue = parent[removeKey];
+    delete parent[removeKey];
+    this.setState(this.state.data);
+    if(this.props.onChange) this.props.onChange(removeKey, currentValue, parent, this.state.data);
+
+  }
+
   recursiveParseData(currentKey, parentKeyPath, parent, elems, marginLeft, isLastSibling){
     let data = parent[currentKey]; 
     switch(this.getDataType(data)){
       case "array":
-        console.log(currentKey)
         this.parseArray(currentKey, parentKeyPath, data, parent, elems, marginLeft, isLastSibling);
         break;
       case "object":
@@ -116,25 +135,39 @@ export default class JSONViewer extends React.Component {
           this.getLabelAndValue(currentKey, parentKeyPath, data, parent, "builtin", marginLeft, isLastSibling)
         );
     }
+    
+    if(isLastSibling && this.props.showAddNewButton){
+      //ability to add more elements to the tree
+      elems.push(
+        <AddIcon 
+          parent={parent}
+          addElement={this.addElement}
+          marginLeft={marginLeft} 
+          key={getKey('add_icon', currentKey, parentKeyPath, marginLeft)}/>
+      )
+    }
   }
 
   getCollapseIcon(marginLeft, currentKey, parentKeyPath){
     let {collapsedNodes} = this.state;
     let {collapsible, marginLeftStep} = this.props;
     return (
-      <CollapseIcon 
-        key={getKey('collapse_icon', currentKey, parentKeyPath, marginLeft)}
-        collapsedNodes={collapsedNodes} 
-        marginLeft={marginLeft} 
-        collapsible={collapsible} 
-        currentKey={currentKey}
-        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
-        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
-      />
+      <span key={getKey('collapse_and_remove', currentKey, parentKeyPath, marginLeft)}>
+        <CollapseIcon 
+          collapsedNodes={collapsedNodes} 
+          marginLeft={marginLeft} 
+          collapsible={collapsible} 
+          currentKey={currentKey}
+          isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
+          toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
+        />
+      
+      </span>
     )
   }
 
   getLabelAndValue(currentKey, parentKeyPath, value, parent, type, marginLeft, isLastSibling){
+    let {showRemoveButton} = this.props;
     if(isArray(parent)){
       //for arrays we dont show keys
       return this.getLabel(value, type, marginLeft, isLastSibling, currentKey, parentKeyPath);
@@ -142,9 +175,12 @@ export default class JSONViewer extends React.Component {
       return (
         <LabelAndValue 
           key={getKey('label_and_value', currentKey, parentKeyPath, marginLeft)}
-          label={currentKey}
+          currentKey={currentKey}
           value={value}
-          type={type} 
+          type={type}
+          parent={parent}
+          removeElement={this.removeElement}
+          showRemoveButton={showRemoveButton} 
           marginLeft={marginLeft}
           isLastSibling={isLastSibling}/>
       );
@@ -217,12 +253,33 @@ const Label = (props) => {
   );
 }
 
-const LabelAndValue = (props) => {
-  let {label, marginLeft, type, value, isLastSibling} = props;
+const RemoveIcon = (props) => {
+  let {removeElement, parent, currentKey} = props;
   return (
-    <span key={`label_and_value_${label}`}>
+    <span onClick={() => removeElement(parent, currentKey)}>
+      {printSpaces(1)}
+      <span style={styles.removeButton}>&#215;</span>
+    </span>
+  )
+}
+
+const AddIcon = (props) => {
+  let {marginLeft, addElement, parent} = props;
+  return (
+    <span onClick={() => addElement(parent)}>
+      <br/>
+      {printSpaces(marginLeft + 1)}
+      <span style={styles.addButton}>&#43;</span>
+    </span>
+  )
+}
+
+const LabelAndValue = (props) => {
+  let {currentKey, marginLeft, type, value, isLastSibling, showRemoveButton, removeElement, parent} = props;
+  return (
+    <span key={`label_and_value_${currentKey}`}>
       <Label 
-        value={label}
+        value={currentKey}
         type="property" 
         isLastSibling={isLastSibling}
         marginLeft={marginLeft}/>
@@ -231,6 +288,10 @@ const LabelAndValue = (props) => {
         type={type}
         isLastSibling={isLastSibling}
         marginLeft={1}/>
+      {showRemoveButton ? <RemoveIcon 
+        parent={parent} 
+        currentKey={currentKey} 
+        removeElement={removeElement}/> : null}
     </span>
   );
 }
@@ -255,5 +316,13 @@ const styles = {
   },
   collapseIcon: {
     cursor: "pointer"
+  },
+  addButton: {
+    cursor: "pointer"
+  },
+  removeButton: {
+    cursor: "pointer",
+    color: "red",
+    marginRight: 10
   }
 };
