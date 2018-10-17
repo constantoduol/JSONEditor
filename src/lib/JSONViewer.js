@@ -7,9 +7,7 @@ export default class JSONViewer extends React.Component {
     data: {}, //data to edit
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
-    collapsedNodes: {},
-    showAddNewButton: true,
-    showRemoveButton: true
+    collapsedNodes: {}
   };
 
   constructor(props){
@@ -19,9 +17,6 @@ export default class JSONViewer extends React.Component {
       data: data,
       collapsedNodes: this.props.collapsedNodes
     };
-
-    this.addElement = this.addElement.bind(this);
-    this.removeElement = this.removeElement.bind(this);
   }
 
   parseArray(currentKey, parentKeyPath, data, parent, elems, marginLeft, isLastSibling){
@@ -91,21 +86,6 @@ export default class JSONViewer extends React.Component {
     else return "builtin";
   }
 
-  addElement(parent){
-    let randomKey = Math.floor(Math.random() * 100000000);
-    parent[randomKey] = "hello world"
-    this.setState({data: this.state.data});
-    // if(this.props.onChange) this.props.onChange(randomKey, currentValue, parent, this.state.data);
-  }
-
-  removeElement(parent, removeKey){
-    let currentValue = parent[removeKey];
-    delete parent[removeKey];
-    this.setState(this.state.data);
-    if(this.props.onChange) this.props.onChange(removeKey, currentValue, parent, this.state.data);
-
-  }
-
   recursiveParseData(currentKey, parentKeyPath, parent, elems, marginLeft, isLastSibling){
     let data = parent[currentKey]; 
     switch(this.getDataType(data)){
@@ -136,16 +116,6 @@ export default class JSONViewer extends React.Component {
         );
     }
     
-    if(isLastSibling && this.props.showAddNewButton){
-      //ability to add more elements to the tree
-      elems.push(
-        <AddIcon 
-          parent={parent}
-          addElement={this.addElement}
-          marginLeft={marginLeft} 
-          key={getKey('add_icon', currentKey, parentKeyPath, marginLeft)}/>
-      )
-    }
   }
 
   getCollapseIcon(marginLeft, currentKey, parentKeyPath){
@@ -167,7 +137,6 @@ export default class JSONViewer extends React.Component {
   }
 
   getLabelAndValue(currentKey, parentKeyPath, value, parent, type, marginLeft, isLastSibling){
-    let {showRemoveButton} = this.props;
     if(isArray(parent)){
       //for arrays we dont show keys
       return this.getLabel(value, type, marginLeft, isLastSibling, currentKey, parentKeyPath);
@@ -179,8 +148,6 @@ export default class JSONViewer extends React.Component {
           value={value}
           type={type}
           parent={parent}
-          removeElement={this.removeElement}
-          showRemoveButton={showRemoveButton} 
           marginLeft={marginLeft}
           isLastSibling={isLastSibling}/>
       );
@@ -253,29 +220,8 @@ const Label = (props) => {
   );
 }
 
-const RemoveIcon = (props) => {
-  let {removeElement, parent, currentKey} = props;
-  return (
-    <span onClick={() => removeElement(parent, currentKey)}>
-      {printSpaces(1)}
-      <span style={styles.removeButton}>&#215;</span>
-    </span>
-  )
-}
-
-const AddIcon = (props) => {
-  let {marginLeft, addElement, parent} = props;
-  return (
-    <span onClick={() => addElement(parent)}>
-      <br/>
-      {printSpaces(marginLeft + 1)}
-      <span style={styles.addButton}>&#43;</span>
-    </span>
-  )
-}
-
 const LabelAndValue = (props) => {
-  let {currentKey, marginLeft, type, value, isLastSibling, showRemoveButton, removeElement, parent} = props;
+  let {currentKey, marginLeft, type, value, isLastSibling} = props;
   return (
     <span key={`label_and_value_${currentKey}`}>
       <Label 
@@ -288,10 +234,6 @@ const LabelAndValue = (props) => {
         type={type}
         isLastSibling={isLastSibling}
         marginLeft={1}/>
-      {showRemoveButton ? <RemoveIcon 
-        parent={parent} 
-        currentKey={currentKey} 
-        removeElement={removeElement}/> : null}
     </span>
   );
 }
@@ -316,13 +258,5 @@ const styles = {
   },
   collapseIcon: {
     cursor: "pointer"
-  },
-  addButton: {
-    cursor: "pointer"
-  },
-  removeButton: {
-    cursor: "pointer",
-    color: "red",
-    marginRight: 10
   }
 };

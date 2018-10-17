@@ -40,6 +40,8 @@ const App = () => (
         }}
       view="dual"
       collapsible
+      showAddButton
+      showRemoveButton
       onChange={this.onJsonChange}
     />
   </div>

@@ -15,7 +15,9 @@ export default class JSONEditor extends React.Component {
     onChange: null, //data changed handler,
     view: "single", //dual, shows the editor and the json viewer side to side,
     collapsedNodes: {},
-    synchronizedCollapse: true //if in dual view when editor is collapsed, viewer is also collapsed 
+    synchronizedCollapse: true, //if in dual view when editor is collapsed, viewer is also collapsed 
+    showAddNewButton: true,
+    showRemoveButton: true
   }
 
   constructor(props){
@@ -24,6 +26,9 @@ export default class JSONEditor extends React.Component {
       data: {'root' : props.cloneData ? cloneDeep(props.data) : props.data},
       collapsedNodes: this.props.collapsedNodes
     };
+
+    this.addElement = this.addElement.bind(this);
+    this.removeElement = this.removeElement.bind(this);
   }
 
   getCollapseIcon(marginLeft, currentKey){
@@ -66,16 +71,20 @@ export default class JSONEditor extends React.Component {
     let data = parent[currentKey]; 
     let label = currentKey;
     let {marginLeftStep} = this.props;
+
     if(isArray(parent)) {
       label += 1;
       label += "."
     }
+
     if(isArray(data)){
       if(marginLeft > 0){ //special case to avoid showing root
         elems.push(
           <ParentLabel
             key={getKey('parent_label', currentKey, parentKeyPath, marginLeft)} 
-            value={label} 
+            value={label}
+            addElement={this.addElement}
+            current={data} 
             marginLeft={marginLeft}
             currentKey={currentKey}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
@@ -96,6 +105,8 @@ export default class JSONEditor extends React.Component {
           <ParentLabel
             key={getKey('parent_label', currentKey, parentKeyPath, marginLeft)}  
             value={label} 
+            addElement={this.addElement}
+            current={data}
             marginLeft={marginLeft}
             currentKey={currentKey}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
@@ -104,7 +115,7 @@ export default class JSONEditor extends React.Component {
       }
 
       if(isNodeCollapsed.call(this, marginLeft, currentKey, marginLeftStep)) return; //this node is collapsed
-      
+
       Object.keys(data).forEach(key => {
         this.recursiveParseData(key, parentKeyPath, data, elems, marginLeft + marginLeftStep);
       });
@@ -142,6 +153,31 @@ export default class JSONEditor extends React.Component {
           value={data}/>
       );
     }
+
+    // if(this.props.showRemoveButton){
+    //   elems.push(
+    //     <RemoveIcon 
+    //       current={data} 
+    //       currentKey={currentKey} 
+    //       removeElement={this.removeElement}/>
+    //   )
+    // }
+
+  }
+
+  addElement(parent){
+    let randomKey = Math.floor(Math.random() * 100000000);
+    parent[randomKey] = "hello world"
+    this.setState({data: this.state.data});
+    // if(this.props.onChange) this.props.onChange(randomKey, currentValue, parent, this.state.data);
+  }
+
+  removeElement(parent, removeKey){
+    let currentValue = parent[removeKey];
+    delete parent[removeKey];
+    this.setState(this.state.data);
+    if(this.props.onChange) this.props.onChange(removeKey, currentValue, parent, this.state.data);
+
   }
 
   render(){
@@ -210,14 +246,44 @@ const Label = (props) => {
 }
 
 const ParentLabel = (props) => {
-  let {marginLeft, value, currentKey, getCollapseIcon} = props;
+  let {marginLeft, value, currentKey, getCollapseIcon, addElement, current} = props;
   let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
   return (
     <div style={style}>
       <div>{value}</div>
-      <div style={{marginLeft: 5}}>{getCollapseIcon(marginLeft, currentKey)}</div>
+      <div 
+        title="collapse node"
+        style={{marginLeft: 5}}>
+          {getCollapseIcon(marginLeft, currentKey)}
+      </div>
+      <div 
+        style={{marginLeft: 10}} 
+        title="add item">
+          <AddIcon 
+            addElement={addElement} 
+            current={current}
+          />
+      </div>
     </div>
   );
+}
+
+const RemoveIcon = (props) => {
+  let {removeElement, current, currentKey} = props;
+  return (
+    <span onClick={() => removeElement(current, currentKey)}>
+      <span style={styles.removeButton}>&#215;</span>
+    </span>
+  )
+}
+
+const AddIcon = (props) => {
+  let {addElement, current} = props;
+  return (
+    <span onClick={() => addElement(current)}>
+      <span style={styles.addButton}>&#43;</span>
+    </span>
+  )
 }
 
 const getKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
@@ -264,5 +330,13 @@ const styles = {
     borderRadius: 3,
     border: "1px solid #d3d3d3",
     padding: 3
+  },
+  addButton: {
+    cursor: "pointer"
+  },
+  removeButton: {
+    cursor: "pointer",
+    color: "red",
+    marginRight: 10
   }
 };
