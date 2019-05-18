@@ -1,6 +1,6 @@
 ### Getting started
 
-`npm install react-json-editor-viewer`
+`npm i react-json-editor-viewer`
 
 ### Easily view json in react
 
@@ -47,7 +47,7 @@ import {JSONViewer} from 'react-json-editor-viewer';
 
 ![Alt text](images/jsonviewer_collapse.png?raw=true "JSON Viewer")
 
-### Edit json easily and listen to changes in the data
+### Edit json easily and listen to changes in the data, hover on elements to add/remove keys
 
 ```javascript
 import {JSONEditor} from 'react-json-editor-viewer';

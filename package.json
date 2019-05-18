@@ -1,6 +1,6 @@
 {
   "name": "react-json-editor-viewer",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "React JSON Editor and JSON Viewer",
   "main": "build/index.js",
   "scripts": {

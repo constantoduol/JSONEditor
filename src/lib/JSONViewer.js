@@ -90,7 +90,6 @@ export default class JSONViewer extends React.Component {
     let data = parent[currentKey]; 
     switch(this.getDataType(data)){
       case "array":
-        console.log(currentKey)
         this.parseArray(currentKey, parentKeyPath, data, parent, elems, marginLeft, isLastSibling);
         break;
       case "object":
@@ -116,21 +115,24 @@ export default class JSONViewer extends React.Component {
           this.getLabelAndValue(currentKey, parentKeyPath, data, parent, "builtin", marginLeft, isLastSibling)
         );
     }
+    
   }
 
   getCollapseIcon(marginLeft, currentKey, parentKeyPath){
     let {collapsedNodes} = this.state;
     let {collapsible, marginLeftStep} = this.props;
     return (
-      <CollapseIcon 
-        key={getKey('collapse_icon', currentKey, parentKeyPath, marginLeft)}
-        collapsedNodes={collapsedNodes} 
-        marginLeft={marginLeft} 
-        collapsible={collapsible} 
-        currentKey={currentKey}
-        isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
-        toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
-      />
+      <span key={getKey('collapse_and_remove', currentKey, parentKeyPath, marginLeft)}>
+        <CollapseIcon 
+          collapsedNodes={collapsedNodes} 
+          marginLeft={marginLeft} 
+          collapsible={collapsible} 
+          currentKey={currentKey}
+          isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
+          toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
+        />
+      
+      </span>
     )
   }
 
@@ -142,9 +144,10 @@ export default class JSONViewer extends React.Component {
       return (
         <LabelAndValue 
           key={getKey('label_and_value', currentKey, parentKeyPath, marginLeft)}
-          label={currentKey}
+          currentKey={currentKey}
           value={value}
-          type={type} 
+          type={type}
+          parent={parent}
           marginLeft={marginLeft}
           isLastSibling={isLastSibling}/>
       );
@@ -218,11 +221,11 @@ const Label = (props) => {
 }
 
 const LabelAndValue = (props) => {
-  let {label, marginLeft, type, value, isLastSibling} = props;
+  let {currentKey, marginLeft, type, value, isLastSibling} = props;
   return (
-    <span key={`label_and_value_${label}`}>
+    <span key={`label_and_value_${currentKey}`}>
       <Label 
-        value={label}
+        value={currentKey}
         type="property" 
         isLastSibling={isLastSibling}
         marginLeft={marginLeft}/>
@@ -238,7 +241,7 @@ const LabelAndValue = (props) => {
 const styles = {
   root: {
     margin: 5,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: "monospace"
   },
   builtin: {
