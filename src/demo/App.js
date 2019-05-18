@@ -8,13 +8,20 @@ const App = () => (
     <JSONEditor 
       data={{
           "mobile": {
+            "possibleCountryCodes": [
+              "KE",
+              "UG",
+              "TZ"
+            ],
             "possibleLengths": {
-              "national": "5"
+              "national": "5",
+              "sub_national": "7",
             },
             "exampleNumber": "40123",
             "nationalNumberPattern": "4\\d{4}"
           },
           "id": "AC",
+          "is_valid_number": true,
           "generalDesc": {
             "nationalNumberPattern": "[46]\\d{4}|[01589]\\d{5}"
           },

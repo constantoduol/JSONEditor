@@ -241,7 +241,7 @@ const LabelAndValue = (props) => {
 const styles = {
   root: {
     margin: 5,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: "monospace"
   },
   builtin: {
