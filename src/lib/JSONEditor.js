@@ -18,7 +18,7 @@ export default class JSONEditor extends React.Component {
     view: "single", //dual, shows the editor and the json viewer side to side,
     collapsedNodes: {},
     synchronizedCollapse: true, //if in dual view when editor is collapsed, viewer is also collapsed 
-    showAddNewButton: true,
+    showAddButton: true,
     showRemoveButton: true
   }
 
@@ -84,6 +84,8 @@ export default class JSONEditor extends React.Component {
             value={label}
             addElement={this.addElement}
             removeElement={this.removeElement}
+            showRemoveButton={this.props.showRemoveButton}
+            showAddButton={this.props.showAddButton}
             current={data} 
             parent={parent}
             marginLeft={marginLeft}
@@ -108,6 +110,8 @@ export default class JSONEditor extends React.Component {
             value={label} 
             addElement={this.addElement}
             removeElement={this.removeElement}
+            showRemoveButton={this.props.showRemoveButton}
+            showAddButton={this.props.showAddButton}
             current={data}
             parent={parent}
             marginLeft={marginLeft}
@@ -131,6 +135,8 @@ export default class JSONEditor extends React.Component {
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
           saveElement={this.saveElement}
+          showRemoveButton={this.props.showRemoveButton}
+          showAddButton={this.props.showAddButton}
           label={label} 
           type="number"
           parent={parent}
@@ -146,6 +152,8 @@ export default class JSONEditor extends React.Component {
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
           saveElement={this.saveElement}
+          showRemoveButton={this.props.showRemoveButton}
+          showAddButton={this.props.showAddButton}
           label={label} 
           type="text"
           parent={parent}
@@ -160,6 +168,8 @@ export default class JSONEditor extends React.Component {
           marginLeft={marginLeft} 
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
+          showRemoveButton={this.props.showRemoveButton}
+          showAddButton={this.props.showAddButton}
           parent={parent}
           currentKey={currentKey}
           onChange={this.dataChanged.bind(this, currentKey, parent, 'boolean')}
@@ -253,7 +263,9 @@ class Input extends React.Component {
   }
 
   render(){
-    let {marginLeft, marginBottom, label, value, type, onChange, removeElement, parent, currentKey} = this.props;
+    let {
+        marginLeft, marginBottom, label, value, type, 
+        onChange, removeElement, parent, currentKey, showRemoveButton} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div 
@@ -274,12 +286,13 @@ class Input extends React.Component {
             saveElement={this.onSaveElement}
           />
         </div>
-        <div hidden={!this.state.hovering}>
-          <RemoveIcon 
-            removeFrom={parent} 
-            removeKey={currentKey} 
-            removeElement={removeElement}/>
-        </div>
+        
+        <RemoveIcon 
+          hidden={!this.state.hovering || !showRemoveButton}
+          removeFrom={parent} 
+          removeKey={currentKey} 
+          removeElement={removeElement}/>
+        
       </div>
     )
   }
@@ -303,7 +316,9 @@ class Boolean extends React.Component {
   }
 
   render(){
-    let {marginLeft, marginBottom, label, value, onChange, current, currentKey, removeElement} = this.props;
+    let {
+        marginLeft, marginBottom, label, value, 
+        onChange, parent, currentKey, removeElement, showRemoveButton} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div 
@@ -319,12 +334,12 @@ class Boolean extends React.Component {
             <option value="false">False</option>
           </select>
         </div>
-        <div hidden={!this.state.hovering}>
-          <RemoveIcon 
-            removeFrom={current} 
-            removeKey={currentKey} 
-            removeElement={removeElement}/>
-        </div>
+      
+        <RemoveIcon 
+          hidden={!this.state.hovering || !showRemoveButton}
+          removeFrom={parent} 
+          removeKey={currentKey} 
+          removeElement={removeElement}/>
       </div>
     );
   }
@@ -364,7 +379,9 @@ class ParentLabel extends React.Component {
   }
 
   render(){
-    let {marginLeft, value, currentKey, getCollapseIcon, addElement, removeElement, current, parent} = this.props;
+    let {
+        marginLeft, value, currentKey, getCollapseIcon, 
+        addElement, removeElement, current, parent, showRemoveButton, showAddButton} = this.props;
     let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
     return (
       <div 
@@ -381,10 +398,12 @@ class ParentLabel extends React.Component {
           hidden={!this.state.hovering}
           style={{marginLeft: 10}}>
             <AddIcon
+              hidden={!showAddButton}
               addElement={addElement} 
               addTo={current}
             />
             <RemoveIcon 
+              hidden={!showRemoveButton}
               removeFrom={parent} 
               removeKey={currentKey} 
               removeElement={removeElement}/>
@@ -397,9 +416,9 @@ class ParentLabel extends React.Component {
 
 
 const RemoveIcon = (props) => {
-  let {removeElement, removeFrom, removeKey} = props;
+  let {removeElement, removeFrom, removeKey, hidden} = props;
   return (
-    <span title="remove item" onClick={() => removeElement(removeFrom, removeKey)}>
+    <span hidden={hidden} title="remove item" onClick={() => removeElement(removeFrom, removeKey)}>
       <span style={styles.removeButton}>&#215;</span>
     </span>
   )
@@ -416,9 +435,9 @@ const SaveIcon = (props) => {
 }
 
 const AddIcon = (props) => {
-  let {addElement, addTo} = props;
+  let {addElement, addTo, hidden} = props;
   return (
-    <span title="add item" onClick={() => addElement(addTo)}>
+    <span hidden={hidden} title="add item" onClick={() => addElement(addTo)}>
       <span style={styles.addButton}>&#43;</span>
     </span>
   )
