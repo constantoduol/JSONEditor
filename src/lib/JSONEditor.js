@@ -10,7 +10,7 @@ export default class JSONEditor extends React.Component {
   static defaultProps = {
     data: {}, //data to edit
     marginLeftStep: 10, //indentation step for nested objects
-    marginBottom: 4, //margin bottom of nodes
+    marginBottom: 3, //margin bottom of nodes
     collapsible: true, //whether nodes are collapsible or not
     //this prevents modifying the data you passed in however cloning is expensive especially for large objects
     cloneData: true,
@@ -18,8 +18,8 @@ export default class JSONEditor extends React.Component {
     view: "single", //dual, shows the editor and the json viewer side to side,
     collapsedNodes: {},
     synchronizedCollapse: true, //if in dual view when editor is collapsed, viewer is also collapsed 
-    showAddButton: true,
-    showRemoveButton: true
+    showAddButton: true, //show + icon to add elements in object/array
+    showRemoveButton: true //show x icon to remove elements from object/array
   }
 
   constructor(props){
