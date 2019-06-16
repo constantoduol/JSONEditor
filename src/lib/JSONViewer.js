@@ -19,6 +19,17 @@ export default class JSONViewer extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps){
+    if(JSON.stringify(nextProps) !== JSON.stringify(this.state)){
+      this.setState({
+        data : {root: nextProps.data},
+        marginLeftStep: nextProps.marginLeftStep,
+        collapsible: nextProps.collapsible,
+        collapsedNodes: nextProps.collapsedNodes
+      })
+    }
+  }
+
   parseArray(currentKey, parentKeyPath, data, parent, elems, marginLeft, isLastSibling){
     parentKeyPath = parentKeyPath + "_" + currentKey
     let {marginLeftStep} = this.props;

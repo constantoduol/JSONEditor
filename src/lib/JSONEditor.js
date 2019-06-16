@@ -30,6 +30,24 @@ export default class JSONEditor extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps){
+    if(JSON.stringify(nextProps) !== JSON.stringify(this.state)){
+      this.setState({
+        data : {root: nextProps.cloneData ? cloneDeep(nextProps.data) : nextProps.data},
+        marginLeftStep: nextProps.marginLeftStep,
+        marginBottom: nextProps.marginBottom,
+        collapsible: nextProps.collapsible,
+        cloneData: nextProps.cloneData,
+        onChange: nextProps.onChange,
+        view: nextProps.view,
+        collapsedNodes: nextProps.collapsedNodes,
+        synchronizedCollapse: nextProps.synchronizedCollapse,
+        showAddButton: nextProps.showAddButton,
+        showRemoveButton: nextProps.showRemoveButton
+      })
+    }
+  }
+
   getCollapseIcon(marginLeft, currentKey){
     let {collapsedNodes} = this.state;
     let {collapsible, marginLeftStep} = this.props;
