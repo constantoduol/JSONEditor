@@ -2,6 +2,7 @@ import React from 'react';
 
 const CollapseIcon = (props) => {
   let {collapsible, toggleNodeCollapsed, isNodeCollapsed} = props;
+  const styles = props.styles === undefined ? style : props.styles;
   if(!collapsible) return null;
   return isNodeCollapsed() ? 
     <span 
@@ -31,7 +32,7 @@ function isNodeCollapsed(marginLeft, key, marginLeftStep) {
   return collapsedNodes[level][key];
 }
 
-const styles = {
+const style = {
   collapseIcon: {
   	cursor: "pointer"
   }

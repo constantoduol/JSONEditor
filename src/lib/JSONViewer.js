@@ -7,7 +7,8 @@ export default class JSONViewer extends React.Component {
     data: {}, //data to edit
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
-    collapsedNodes: {}
+    collapsedNodes: {},
+    styles: {styles} //pass to override styles
   };
 
   constructor(props){
@@ -25,7 +26,8 @@ export default class JSONViewer extends React.Component {
         data : {root: nextProps.data},
         marginLeftStep: nextProps.marginLeftStep,
         collapsible: nextProps.collapsible,
-        collapsedNodes: nextProps.collapsedNodes
+        collapsedNodes: nextProps.collapsedNodes,
+        styles: nextProps.styles
       })
     }
   }
@@ -131,7 +133,7 @@ export default class JSONViewer extends React.Component {
 
   getCollapseIcon(marginLeft, currentKey, parentKeyPath){
     let {collapsedNodes} = this.state;
-    let {collapsible, marginLeftStep} = this.props;
+    let {collapsible, marginLeftStep, styles} = this.props;
     return (
       <span key={getKey('collapse_and_remove', currentKey, parentKeyPath, marginLeft)}>
         <CollapseIcon 
@@ -139,6 +141,7 @@ export default class JSONViewer extends React.Component {
           marginLeft={marginLeft} 
           collapsible={collapsible} 
           currentKey={currentKey}
+          styles={styles}
           isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
           toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
         />
@@ -148,6 +151,7 @@ export default class JSONViewer extends React.Component {
   }
 
   getLabelAndValue(currentKey, parentKeyPath, value, parent, type, marginLeft, isLastSibling){
+    const {styles} = this.props;
     if(isArray(parent)){
       //for arrays we dont show keys
       return this.getLabel(value, type, marginLeft, isLastSibling, currentKey, parentKeyPath);
@@ -160,24 +164,28 @@ export default class JSONViewer extends React.Component {
           type={type}
           parent={parent}
           marginLeft={marginLeft}
-          isLastSibling={isLastSibling}/>
+          isLastSibling={isLastSibling}
+          styles={styles}/>
       );
     }
   }
 
   getLabel(value, type, marginLeft, isLastSibling, currentKey, parentKeyPath){
+    const {styles} = this.props;
     return (
       <Label 
         key={getKey('label', currentKey + value, parentKeyPath, marginLeft)}
         value={value}
         type={type} 
         marginLeft={marginLeft}
-        isLastSibling={isLastSibling}/>
+        isLastSibling={isLastSibling}
+        styles={styles}/>
     )
   }
 
   render(){
     let elems = [];
+    const {styles} = this.props;
     this.recursiveParseData("root", '', this.state.data, elems, 0, true);
     return <div style={styles.root}>{elems}</div>
   }
@@ -198,7 +206,7 @@ const getKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
 }
 
 const Label = (props) => {
-  let {marginLeft, value, type, isLastSibling} = props;
+  let {marginLeft, value, type, isLastSibling, styles} = props;
   let style = styles.text;
   switch(type){
     case "number":
@@ -232,19 +240,21 @@ const Label = (props) => {
 }
 
 const LabelAndValue = (props) => {
-  let {currentKey, marginLeft, type, value, isLastSibling} = props;
+  let {currentKey, marginLeft, type, value, isLastSibling, styles} = props;
   return (
     <span key={`label_and_value_${currentKey}`}>
       <Label 
         value={currentKey}
         type="property" 
         isLastSibling={isLastSibling}
-        marginLeft={marginLeft}/>
+        marginLeft={marginLeft}
+        styles={styles}/>
       <Label 
         value={value}
         type={type}
         isLastSibling={isLastSibling}
-        marginLeft={1}/>
+        marginLeft={1}
+        styles={styles}/>
     </span>
   );
 }

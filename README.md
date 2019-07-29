@@ -110,5 +110,15 @@ onJsonChange(key, value, parent, data){
 ```
 ![Alt text](images/jsoneditor_dual.png?raw=true "JSON Viewer")
 
+### Configure your optional custom styles
+See the source for the [Demo App](src/demo/App.js)
+
+default
+
+![Alt text](images/jsoneditor_unstyled.png?raw=true "Unstyled JSON Editor")
+
+override custom styles
+
+![Alt text](images/jsoneditor_styled.png?raw=true "Styled JSON Editor")
 
 ### License: MIT
