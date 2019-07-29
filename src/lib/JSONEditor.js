@@ -5,6 +5,83 @@ import {CollapseIcon, isNodeCollapsed, toggleNodeCollapsed} from './CollapseIcon
 
 const EDIT_KEY = "__editable_json_editor__"
 
+const styles = {
+  dualView: {
+    display: "flex"
+  },
+  jsonViewer: {
+    borderLeft: "1px solid lightgrey",
+    width: "50%",
+    margin: 10
+  },
+  jsonEditor: {
+    width: "50%",
+    fontSize: 14,
+    fontFamily: "monospace",
+    margin: 10
+  },
+  label: {
+    color: "#c00",
+    marginTop: 4
+  },
+  value: {
+    marginLeft: 10
+  },
+  row: {
+    display: "flex",
+  },
+  root: {
+    fontSize: 14,
+    fontFamily: "monospace"
+  },
+  withChildrenLabel: {
+    color: "#a52a2a"
+  },
+  select: {
+    borderRadius: 3,
+    borderColor: "#d3d3d3"
+  },
+  input: {
+    borderRadius: 3,
+    border: "1px solid #d3d3d3",
+    padding: 3
+  },
+  addButton: {
+    cursor: "pointer",
+    color: "black",
+    marginLeft:15,
+    fontSize: 14
+  },
+  removeButton: {
+    cursor: "pointer",
+    color: "red",
+    marginLeft: 15,
+    fontSize: 14
+  },
+  saveButton: {
+    cursor: "pointer",
+    color: "green",
+    marginLeft: 15,
+    fontSize: 14
+  },
+  builtin: {
+    color: "#00f"
+  },
+  text: {
+    color: "#077"
+  },
+  number: {
+    color: "#a0a"
+  },
+  property: {
+    color: "#c00"
+  },
+  collapseIcon: {
+    cursor: "pointer"
+  }
+};
+
+
 export default class JSONEditor extends React.Component {
 
   static defaultProps = {
@@ -19,7 +96,8 @@ export default class JSONEditor extends React.Component {
     collapsedNodes: {},
     synchronizedCollapse: true, //if in dual view when editor is collapsed, viewer is also collapsed 
     showAddButton: true, //show + icon to add elements in object/array
-    showRemoveButton: true //show x icon to remove elements from object/array
+    showRemoveButton: true, //show x icon to remove elements from object/array,
+    styles: styles //pass to override styles
   }
 
   constructor(props){
@@ -43,20 +121,22 @@ export default class JSONEditor extends React.Component {
         collapsedNodes: nextProps.collapsedNodes,
         synchronizedCollapse: nextProps.synchronizedCollapse,
         showAddButton: nextProps.showAddButton,
-        showRemoveButton: nextProps.showRemoveButton
+        showRemoveButton: nextProps.showRemoveButton,
+        styles: nextProps.styles
       })
     }
   }
 
   getCollapseIcon(marginLeft, currentKey){
     let {collapsedNodes} = this.state;
-    let {collapsible, marginLeftStep} = this.props;
+    let {collapsible, marginLeftStep, styles} = this.props;
     return (
       <CollapseIcon 
         collapsedNodes={collapsedNodes} 
         marginLeft={marginLeft} 
         collapsible={collapsible} 
         currentKey={currentKey}
+        styles={styles}
         isNodeCollapsed={isNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
         toggleNodeCollapsed={toggleNodeCollapsed.bind(this, marginLeft, currentKey, marginLeftStep)}
       />
@@ -87,7 +167,7 @@ export default class JSONEditor extends React.Component {
     parentKeyPath = parentKeyPath + "_" + currentKey
     let data = parent[currentKey]; 
     let label = currentKey;
-    let {marginLeftStep} = this.props;
+    let {marginLeftStep, styles} = this.props;
 
     if(isArray(parent)) {
       label += 1;
@@ -108,6 +188,7 @@ export default class JSONEditor extends React.Component {
             parent={parent}
             marginLeft={marginLeft}
             currentKey={currentKey}
+            styles={styles}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
           />
         );
@@ -134,6 +215,7 @@ export default class JSONEditor extends React.Component {
             parent={parent}
             marginLeft={marginLeft}
             currentKey={currentKey}
+            styles={styles}
             getCollapseIcon={this.getCollapseIcon.bind(this)}
           />
         );
@@ -160,6 +242,7 @@ export default class JSONEditor extends React.Component {
           parent={parent}
           currentKey={currentKey}
           onChange={this.dataChanged.bind(this, currentKey, parent, 'number')}
+          styles={styles}
           value={data}/>
       );
     } else if(isString(data)) {
@@ -177,6 +260,7 @@ export default class JSONEditor extends React.Component {
           parent={parent}
           currentKey={currentKey}
           onChange={this.dataChanged.bind(this, currentKey, parent, 'text')}
+          styles={styles}
           value={data}/>
       );
     } else if(isBoolean(data)){
@@ -192,7 +276,8 @@ export default class JSONEditor extends React.Component {
           currentKey={currentKey}
           onChange={this.dataChanged.bind(this, currentKey, parent, 'boolean')}
           label={label} 
-          value={data}/>
+          value={data}
+          styles={styles}/>
       );
     }
 
@@ -232,7 +317,7 @@ export default class JSONEditor extends React.Component {
 
   render(){
     let elems = [];
-    let {view, collapsible, synchronizedCollapse} = this.props;
+    let {view, collapsible, synchronizedCollapse, styles} = this.props;
     let {data, collapsedNodes} = this.state;
     this.recursiveParseData('root', '', data, elems, 0);
     if(view === "single"){
@@ -245,7 +330,9 @@ export default class JSONEditor extends React.Component {
             <JSONViewer 
               data={data.root} 
               collapsible={collapsible} 
-              collapsedNodes={synchronizedCollapse ? collapsedNodes : {}}/>
+              collapsedNodes={synchronizedCollapse ? collapsedNodes : {}}
+              styles={styles}
+            />
           </div>
         </div>
       )
@@ -283,7 +370,7 @@ class Input extends React.Component {
   render(){
     let {
         marginLeft, marginBottom, label, value, type, 
-        onChange, removeElement, parent, currentKey, showRemoveButton} = this.props;
+        onChange, removeElement, parent, currentKey, showRemoveButton, styles} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div 
@@ -292,6 +379,7 @@ class Input extends React.Component {
           onMouseLeave={this.hoverStopped}>
         <Label 
           value={label}
+          styles={styles}
           onEditableInputChange={this.onEditableInputChange} 
           marginLeft={0}/>
         <div style={styles.value}>
@@ -302,6 +390,7 @@ class Input extends React.Component {
             saveIn={parent}
             saveKey={label}
             saveElement={this.onSaveElement}
+            styles={styles}
           />
         </div>
         
@@ -309,7 +398,8 @@ class Input extends React.Component {
           hidden={!this.state.hovering || !showRemoveButton}
           removeFrom={parent} 
           removeKey={currentKey} 
-          removeElement={removeElement}/>
+          removeElement={removeElement}
+          styles={styles}/>
         
       </div>
     )
@@ -336,7 +426,7 @@ class Boolean extends React.Component {
   render(){
     let {
         marginLeft, marginBottom, label, value, 
-        onChange, parent, currentKey, removeElement, showRemoveButton} = this.props;
+        onChange, parent, currentKey, removeElement, showRemoveButton, styles} = this.props;
     let style = merge({marginLeft, marginBottom}, styles.row);
     return (
       <div 
@@ -344,7 +434,8 @@ class Boolean extends React.Component {
           onMouseEnter={this.hoverStarted}
           onMouseLeave={this.hoverStopped}>
         <Label 
-          value={label} 
+          value={label}
+          styles={styles}
           marginLeft={0}/>
         <div style={styles.value}>
           <select style={styles.select} value={value} onChange={onChange}>
@@ -357,14 +448,15 @@ class Boolean extends React.Component {
           hidden={!this.state.hovering || !showRemoveButton}
           removeFrom={parent} 
           removeKey={currentKey} 
-          removeElement={removeElement}/>
+          removeElement={removeElement}
+          styles={styles}/>
       </div>
     );
   }
 }
 
 const Label = (props) => {
-  let {marginLeft, value, onEditableInputChange} = props;
+  let {marginLeft, value, onEditableInputChange, styles} = props;
   if(value === EDIT_KEY){
     return (
       <div>
@@ -399,7 +491,7 @@ class ParentLabel extends React.Component {
   render(){
     let {
         marginLeft, value, currentKey, getCollapseIcon, 
-        addElement, removeElement, current, parent, showRemoveButton, showAddButton} = this.props;
+        addElement, removeElement, current, parent, showRemoveButton, showAddButton, styles} = this.props;
     let style = merge({marginLeft: marginLeft, display: "flex"}, styles.label);
     return (
       <div 
@@ -419,12 +511,15 @@ class ParentLabel extends React.Component {
               hidden={!showAddButton}
               addElement={addElement} 
               addTo={current}
+              styles={styles}
             />
             <RemoveIcon 
               hidden={!showRemoveButton}
               removeFrom={parent} 
               removeKey={currentKey} 
-              removeElement={removeElement}/>
+              removeElement={removeElement}
+              styles={styles}
+            />
         </div>
       </div>
     );
@@ -434,7 +529,7 @@ class ParentLabel extends React.Component {
 
 
 const RemoveIcon = (props) => {
-  let {removeElement, removeFrom, removeKey, hidden} = props;
+  let {removeElement, removeFrom, removeKey, hidden, styles} = props;
   return (
     <span hidden={hidden} title="remove item" onClick={() => removeElement(removeFrom, removeKey)}>
       <span style={styles.removeButton}>&#215;</span>
@@ -444,7 +539,7 @@ const RemoveIcon = (props) => {
 
 
 const SaveIcon = (props) => {
-  let {saveElement, saveIn, saveKey} = props;
+  let {saveElement, saveIn, saveKey, styles} = props;
   return (
     <span title="save item" onClick={() => saveElement(saveIn, saveKey)}>
       <span style={styles.saveButton}>&#10003;</span>
@@ -453,7 +548,7 @@ const SaveIcon = (props) => {
 }
 
 const AddIcon = (props) => {
-  let {addElement, addTo, hidden} = props;
+  let {addElement, addTo, hidden, styles} = props;
   return (
     <span hidden={hidden} title="add item" onClick={() => addElement(addTo)}>
       <span style={styles.addButton}>&#43;</span>
@@ -465,63 +560,3 @@ const getKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
   return `${prefix}_${parentKeyPath}_${currentKey}_${marginLeft}`
 }
 
-const styles = {
-  dualView: {
-    display: "flex"
-  },
-  jsonViewer: {
-    borderLeft: "1px solid lightgrey",
-    width: "50%",
-    margin: 10
-  },
-  jsonEditor: {
-    width: "50%",
-    fontSize: 14,
-    fontFamily: "monospace",
-    margin: 10
-  },
-  label: {
-    color: "#c00",
-    marginTop: 4
-  },
-  value: {
-   marginLeft: 10
-  },
-  row: {
-    display: "flex",
-  },
-  root: {
-    fontSize: 14,
-    fontFamily: "monospace"
-  },
-  withChildrenLabel: {
-    color: "#a52a2a"
-  },
-  select: {
-    borderRadius: 3,
-    borderColor: "#d3d3d3"
-  },
-  input: {
-    borderRadius: 3,
-    border: "1px solid #d3d3d3",
-    padding: 3
-  },
-  addButton: {
-    cursor: "pointer",
-    color: "black",
-    marginLeft:15,
-    fontSize: 14
-  },
-  removeButton: {
-    cursor: "pointer",
-    color: "red",
-    marginLeft: 15,
-    fontSize: 14
-  },
-  saveButton: {
-    cursor: "pointer",
-    color: "green",
-    marginLeft: 15,
-    fontSize: 14
-  }
-};
