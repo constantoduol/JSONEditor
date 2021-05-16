@@ -13,14 +13,13 @@ import {
   isNodeCollapsed,
   toggleNodeCollapsed,
 } from "./CollapseIcon";
-import {
-  styles,
-  EDIT_KEY,
-  Boolean,
-  getKey,
-  ParentLabel,
-  Input,
-} from "./components";
+
+import { Boolean } from "./components/Boolean";
+import { ParentLabel } from "./components/ParentLabel";
+import { Input } from "./components/Input";
+import { EDIT_KEY } from "./helpers/editKey";
+import { styles } from "./helpers/styles";
+import { getKey } from "./helpers/GetKey"
 
 export default class JSONEditor extends React.Component {
   static defaultProps = {

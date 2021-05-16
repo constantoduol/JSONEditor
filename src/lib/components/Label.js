@@ -1,5 +1,5 @@
 import React from "react";
-import { EDIT_KEY } from "./editKey";
+import { EDIT_KEY } from "../helpers/editKey";
 import { merge } from "lodash";
 
 export const Label = (props) => {
