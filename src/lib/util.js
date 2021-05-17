@@ -1,4 +1,10 @@
-export const styles = {
+export const EDIT_KEY = "__editable_json_editor__";
+
+export const getKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
+  return `${prefix}_${parentKeyPath}_${currentKey}_${marginLeft}`;
+};
+
+export const jsonEditorDefaultStyles = {
   dualView: {
     display: "flex",
   },
@@ -72,4 +78,31 @@ export const styles = {
   collapseIcon: {
     cursor: "pointer",
   },
+};
+
+export const jsonViewerDefaultStyles = {
+  root: {
+    margin: 5,
+    fontSize: 14,
+    fontFamily: "monospace",
+  },
+  builtin: {
+    color: "#00f",
+  },
+  text: {
+    color: "#077",
+  },
+  number: {
+    color: "#a0a",
+  },
+  property: {
+    color: "#c00",
+  },
+  collapseIcon: {
+    cursor: "pointer",
+  },
+};
+
+export const getViewerKey = (prefix, currentKey, parentKeyPath, marginLeft) => {
+  return `${prefix}_${parentKeyPath}_${currentKey}_${marginLeft}`;
 };

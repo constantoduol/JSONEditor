@@ -1,8 +1,8 @@
 import React from 'react';
 import {isArray, isObject, isNumber, isString, isBoolean} from 'lodash';
 import {CollapseIcon, isNodeCollapsed, toggleNodeCollapsed} from './CollapseIcon';
-import { viewerStyles } from "./helpers/viewerStyles"
-import { getViewerKey } from "./helpers/ViewerKey"
+import { jsonViewerDefaultStyles } from "./util"
+import { getViewerKey } from "./util"
 import { LabelAndValue } from './components/LabelAndValue'
 import { ViewerLabel } from './components/ViewerLabel'
 
@@ -12,7 +12,7 @@ export default class JSONViewer extends React.Component {
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
     collapsedNodes: {},
-    styles: {viewerStyles} //pass to override styles
+    styles: {jsonViewerDefaultStyles} //pass to override styles
   };
 
   constructor(props){

@@ -17,9 +17,9 @@ import {
 import { Boolean } from "./components/Boolean";
 import { ParentLabel } from "./components/ParentLabel";
 import { Input } from "./components/Input";
-import { EDIT_KEY } from "./helpers/editKey";
-import { styles } from "./helpers/styles";
-import { getKey } from "./helpers/GetKey"
+import { EDIT_KEY } from "./util";
+import { jsonEditorDefaultStyles } from "./util";
+import { getKey } from "./util"
 
 export default class JSONEditor extends React.Component {
   static defaultProps = {
@@ -35,7 +35,7 @@ export default class JSONEditor extends React.Component {
     synchronizedCollapse: true, //if in dual view when editor is collapsed, viewer is also collapsed
     showAddButton: true, //show + icon to add elements in object/array
     showRemoveButton: true, //show x icon to remove elements from object/array,
-    styles: styles, //pass to override styles
+    styles: jsonEditorDefaultStyles, //pass to override styles
   };
 
   constructor(props) {

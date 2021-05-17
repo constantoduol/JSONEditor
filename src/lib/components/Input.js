@@ -2,7 +2,7 @@ import React from "react";
 import { merge } from "lodash";
 import { RemoveIcon } from "./RemoveIcon";
 import { SaveIcon } from "./SaveIcon";
-import { EDIT_KEY } from "../helpers/editKey";
+import { EDIT_KEY } from "../util";
 import { Label } from "./Label";
 
 export class Input extends React.Component {
