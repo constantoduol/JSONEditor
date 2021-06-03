@@ -7,7 +7,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "demo": "node scripts/demo.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -44,10 +45,13 @@
     "file-loader": "1.1.5",
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.29.0",
+    "husky": "^6.0.0",
     "jest": "20.0.4",
+    "lint-staged": "^11.0.0",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.8",
+    "prettier": "2.3.0",
     "promise": "8.0.1",
     "raf": "3.4.0",
     "react": "^16.2.0",
@@ -106,5 +110,8 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
