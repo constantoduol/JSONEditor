@@ -4,11 +4,11 @@ import {
   CollapseIcon,
   isNodeCollapsed,
   toggleNodeCollapsed,
-} from "./CollapseIcon";
+} from "./components/shared/CollapseIcon";
 import { jsonViewerDefaultStyles } from "./util";
 import { getKey } from "./util";
-import { LabelAndValue } from "./components/LabelAndValue";
-import { ViewerLabel } from "./components/ViewerLabel";
+import LabelAndValue from "./components/viewer/LabelAndValue";
+import Label from "./components/viewer/Label";
 
 export default class JSONViewer extends React.Component {
   static defaultProps = {
@@ -352,7 +352,7 @@ export default class JSONViewer extends React.Component {
   getLabel(value, type, marginLeft, isLastSibling, currentKey, parentKeyPath) {
     const { styles } = this.props;
     return (
-      <ViewerLabel
+      <Label
         key={getKey("label", currentKey + value, parentKeyPath, marginLeft)}
         value={value}
         type={type}

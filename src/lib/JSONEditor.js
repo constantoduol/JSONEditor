@@ -12,11 +12,11 @@ import {
   CollapseIcon,
   isNodeCollapsed,
   toggleNodeCollapsed,
-} from "./CollapseIcon";
+} from "./components/shared/CollapseIcon";
 
-import { Boolean } from "./components/Boolean";
-import { ParentLabel } from "./components/ParentLabel";
-import { Input } from "./components/Input";
+import Boolean from "./components/editor/Boolean";
+import ParentLabel from "./components/editor/ParentLabel";
+import Input from "./components/editor/Input";
 import { EDIT_KEY } from "./util";
 import { jsonEditorDefaultStyles } from "./util";
 import { getKey } from "./util";

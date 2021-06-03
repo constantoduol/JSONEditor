@@ -1,9 +1,9 @@
 import React from "react";
 import { merge } from "lodash";
-import { AddIcon } from "./AddIcon";
-import { RemoveIcon } from "./RemoveIcon";
+import AddIcon from "./AddIcon";
+import RemoveIcon from "./RemoveIcon";
 
-export class ParentLabel extends React.Component {
+export default class ParentLabel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

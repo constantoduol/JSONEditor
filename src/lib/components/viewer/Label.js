@@ -1,7 +1,6 @@
 import React from "react";
 
 const printSpaces = (marginLeft) => {
-  console.log(marginLeft, "...........");
   //we would have used css to set a margin left
   //but that makes the json lose its formatting when copied
   let spaces = [];
@@ -11,7 +10,7 @@ const printSpaces = (marginLeft) => {
   return <span>{spaces}</span>;
 };
 
-export const ViewerLabel = (props) => {
+const Label = (props) => {
   let { marginLeft, value, type, isLastSibling, styles } = props;
   let style = styles.text;
   switch (type) {
@@ -45,3 +44,5 @@ export const ViewerLabel = (props) => {
     </span>
   );
 };
+
+export default Label;

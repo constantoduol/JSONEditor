@@ -1,7 +1,7 @@
 import React from "react";
-import { Label } from "./Label";
+import Label from "./Label";
 
-export const LabelAndValue = (props) => {
+const LabelAndValue = (props) => {
   let { currentKey, marginLeft, type, value, isLastSibling, styles } = props;
   return (
     <span key={`label_and_value_${currentKey}`}>
@@ -22,3 +22,5 @@ export const LabelAndValue = (props) => {
     </span>
   );
 };
+
+export default LabelAndValue;

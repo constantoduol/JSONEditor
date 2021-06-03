@@ -1,9 +1,9 @@
 import React from "react";
 import { merge } from "lodash";
-import { Label } from "./Label";
-import { RemoveIcon } from "./RemoveIcon";
+import Label from "./Label";
+import RemoveIcon from "./RemoveIcon";
 
-export class Boolean extends React.Component {
+export default class Boolean extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

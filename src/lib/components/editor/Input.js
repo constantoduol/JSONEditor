@@ -1,11 +1,11 @@
 import React from "react";
 import { merge } from "lodash";
-import { RemoveIcon } from "./RemoveIcon";
-import { SaveIcon } from "./SaveIcon";
-import { EDIT_KEY } from "../util";
-import { Label } from "./Label";
+import RemoveIcon from "./RemoveIcon";
+import SaveIcon from "./SaveIcon";
+import { EDIT_KEY } from "../../util";
+import Label from "./Label";
 
-export class Input extends React.Component {
+export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

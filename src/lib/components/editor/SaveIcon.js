@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SaveIcon = (props) => {
+const SaveIcon = (props) => {
   let { saveElement, saveIn, saveKey, styles } = props;
   return (
     <span title="save item" onClick={() => saveElement(saveIn, saveKey)}>
@@ -8,3 +8,5 @@ export const SaveIcon = (props) => {
     </span>
   );
 };
+
+export default SaveIcon;

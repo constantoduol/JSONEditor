@@ -1,6 +1,6 @@
 import React from "react";
 
-export const RemoveIcon = (props) => {
+const RemoveIcon = (props) => {
   let { removeElement, removeFrom, removeKey, hidden, styles } = props;
   return (
     <span
@@ -12,3 +12,5 @@ export const RemoveIcon = (props) => {
     </span>
   );
 };
+
+export default RemoveIcon;

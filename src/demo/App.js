@@ -6,12 +6,14 @@ import { JSONEditor } from "../lib";
 
 const App = () => (
   <div>
+    <h3>Using default styles</h3>
     <JSONEditor
       data={data}
       view="dual"
       collapsible
       onChange={this.onJsonChange}
     />
+    <h3>Using customized styles</h3>
     <JSONEditor
       data={data}
       view="dual"
@@ -25,26 +27,23 @@ const App = () => (
 const styles = {
   dualView: {
     display: "flex",
-    backgroundColor: "black",
   },
   jsonViewer: {
     borderLeft: "1px dashed white",
-    width: "40%",
-    margin: 5,
     lineHeight: 1.25,
+    width: "50%",
+    borderLeft: "1px solid lightgrey",
+    margin: 10,
   },
   jsonEditor: {
-    width: "60%",
+    width: "50%",
     fontSize: 12,
     fontFamily: "Lucida Console, monospace",
-    margin: 5,
     lineHeight: 1.25,
   },
   root: {
     fontSize: 12,
-    margin: 5,
     fontFamily: "Lucida Console, monospace",
-    backgroundColor: "black",
     lineHeight: 1.25,
     /*color: "#3E3D32"*/
   },
@@ -73,7 +72,7 @@ const styles = {
     padding: 2,
     fontFamily: "Lucida Console, monospace",
     fontSize: 12,
-    backgroundColor: "DimGray",
+    backgroundColor: "gray",
     color: "khaki",
     width: "200%",
   },
@@ -100,7 +99,7 @@ const styles = {
     fontSize: 12,
   },
   text: {
-    color: "khaki",
+    color: "black",
     fontSize: 12,
   },
   number: {
@@ -113,7 +112,7 @@ const styles = {
   },
   collapseIcon: {
     cursor: "pointer",
-    fontSize: 8,
+    fontSize: 10,
     color: "teal",
   },
 };
