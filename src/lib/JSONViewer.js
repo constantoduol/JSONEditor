@@ -6,7 +6,7 @@ import {
   toggleNodeCollapsed,
 } from "./CollapseIcon";
 import { jsonViewerDefaultStyles } from "./util";
-import { getViewerKey } from "./util";
+import { getKey } from "./util";
 import { LabelAndValue } from "./components/LabelAndValue";
 import { ViewerLabel } from "./components/ViewerLabel";
 
@@ -16,7 +16,7 @@ export default class JSONViewer extends React.Component {
     marginLeftStep: 2, //no of spaces to the left per nested object
     collapsible: false, //whether nodes are collapsible or not
     collapsedNodes: {},
-    styles: { jsonViewerDefaultStyles }, //pass to override styles
+    styles: jsonViewerDefaultStyles, //pass to override styles
   };
 
   constructor(props) {
@@ -84,9 +84,7 @@ export default class JSONViewer extends React.Component {
     let prevIsLastSibling = isLastSibling;
     for (let key = 0; key < data.length; key++) {
       isLastSibling = key === data.length - 1;
-      elems.push(
-        <br key={getViewerKey("break", key, parentKeyPath, marginLeft)} />
-      );
+      elems.push(<br key={getKey("break", key, parentKeyPath, marginLeft)} />);
       this.recursiveParseData(
         key,
         parentKeyPath,
@@ -97,7 +95,7 @@ export default class JSONViewer extends React.Component {
       );
     }
     elems.push(
-      <br key={getViewerKey("break", currentKey, parentKeyPath, marginLeft)} />
+      <br key={getKey("break", currentKey, parentKeyPath, marginLeft)} />
     );
     elems.push(
       this.getLabel(
@@ -159,9 +157,7 @@ export default class JSONViewer extends React.Component {
     let prevIsLastSibling = isLastSibling;
     keys.forEach((key) => {
       isLastSibling = ++count === keys.length;
-      elems.push(
-        <br key={getViewerKey("break", key, parentKeyPath, marginLeft)} />
-      );
+      elems.push(<br key={getKey("break", key, parentKeyPath, marginLeft)} />);
       this.recursiveParseData(
         key,
         parentKeyPath,
@@ -173,7 +169,7 @@ export default class JSONViewer extends React.Component {
     });
 
     elems.push(
-      <br key={getViewerKey("break", currentKey, parentKeyPath, marginLeft)} />
+      <br key={getKey("break", currentKey, parentKeyPath, marginLeft)} />
     );
     elems.push(
       this.getLabel(
@@ -287,7 +283,7 @@ export default class JSONViewer extends React.Component {
     let { collapsible, marginLeftStep, styles } = this.props;
     return (
       <span
-        key={getViewerKey(
+        key={getKey(
           "collapse_and_remove",
           currentKey,
           parentKeyPath,
@@ -340,12 +336,7 @@ export default class JSONViewer extends React.Component {
     } else {
       return (
         <LabelAndValue
-          key={getViewerKey(
-            "label_and_value",
-            currentKey,
-            parentKeyPath,
-            marginLeft
-          )}
+          key={getKey("label_and_value", currentKey, parentKeyPath, marginLeft)}
           currentKey={currentKey}
           value={value}
           type={type}
@@ -362,12 +353,7 @@ export default class JSONViewer extends React.Component {
     const { styles } = this.props;
     return (
       <ViewerLabel
-        key={getViewerKey(
-          "label",
-          currentKey + value,
-          parentKeyPath,
-          marginLeft
-        )}
+        key={getKey("label", currentKey + value, parentKeyPath, marginLeft)}
         value={value}
         type={type}
         marginLeft={marginLeft}
