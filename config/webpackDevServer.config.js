@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware');
-const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware');
-const path = require('path');
-const config = require('./webpack.config.dev');
-const paths = require('./paths');
+const errorOverlayMiddleware = require("react-dev-utils/errorOverlayMiddleware");
+const noopServiceWorkerMiddleware = require("react-dev-utils/noopServiceWorkerMiddleware");
+const path = require("path");
+const config = require("./webpack.config.dev");
+const paths = require("./paths");
 
-const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
-const host = process.env.HOST || '0.0.0.0';
+const protocol = process.env.HTTPS === "true" ? "https" : "http";
+const host = process.env.HOST || "0.0.0.0";
 
-module.exports = function(proxy, allowedHost) {
+module.exports = function (proxy, allowedHost) {
   return {
     // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
     // websites from potentially accessing local content through DNS rebinding:
@@ -28,12 +28,12 @@ module.exports = function(proxy, allowedHost) {
     // specified the `proxy` setting. Finally, we let you override it if you
     // really know what you're doing with a special environment variable.
     disableHostCheck:
-      !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true',
+      !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === "true",
     // Enable gzip compression of generated files.
     compress: true,
     // Silence WebpackDevServer's own logs since they're generally not useful.
     // It will still show compile warnings and errors with this setting.
-    clientLogLevel: 'none',
+    clientLogLevel: "none",
     // By default WebpackDevServer serves physical files from current directory
     // in addition to all the virtual build products that it serves from memory.
     // This is confusing because those files won’t automatically be available in
@@ -70,13 +70,13 @@ module.exports = function(proxy, allowedHost) {
     watchOptions: {
       ignored: new RegExp(
         `^(?!${path
-          .normalize(paths.appSrc + '/')
-          .replace(/[\\]+/g, '\\\\')}).+[\\\\/]node_modules[\\\\/]`,
-        'g'
+          .normalize(paths.appSrc + "/")
+          .replace(/[\\]+/g, "\\\\")}).+[\\\\/]node_modules[\\\\/]`,
+        "g"
       ),
     },
     // Enable HTTPS if the HTTPS environment variable is set to 'true'
-    https: protocol === 'https',
+    https: protocol === "https",
     host: host,
     overlay: false,
     historyApiFallback: {

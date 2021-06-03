@@ -19,7 +19,7 @@ import { ParentLabel } from "./components/ParentLabel";
 import { Input } from "./components/Input";
 import { EDIT_KEY } from "./util";
 import { jsonEditorDefaultStyles } from "./util";
-import { getKey } from "./util"
+import { getKey } from "./util";
 
 export default class JSONEditor extends React.Component {
   static defaultProps = {

@@ -5,11 +5,9 @@
 ### Easily view json in react
 
 ```javascript
-import {JSONViewer} from 'react-json-editor-viewer';
+import { JSONViewer } from "react-json-editor-viewer";
 
-
-
-<JSONViewer 
+<JSONViewer
   data={{
     the: "men",
     that: "landed",
@@ -18,19 +16,19 @@ import {JSONViewer} from 'react-json-editor-viewer';
     maybe: 2,
     i: "think",
     probably: ["neil armstrong", "buzz aldrin"],
-    am_i_right: true
+    am_i_right: true,
   }}
-/>
-
+/>;
 ```
+
 ![Alt text](images/jsonviewer.png?raw=true "JSON Viewer")
 
 ### Make your json viewer collapsible
 
 ```javascript
-import {JSONViewer} from 'react-json-editor-viewer';
+import { JSONViewer } from "react-json-editor-viewer";
 
-<JSONViewer 
+<JSONViewer
   data={{
     the: "men",
     that: "landed",
@@ -39,10 +37,10 @@ import {JSONViewer} from 'react-json-editor-viewer';
     maybe: 2,
     i: "think",
     probably: ["neil armstrong", "buzz aldrin"],
-    am_i_right: true
+    am_i_right: true,
   }}
   collapsible
-/>
+/>;
 ```
 
 ![Alt text](images/jsonviewer_collapse.png?raw=true "JSON Viewer")
@@ -60,7 +58,7 @@ onJsonChange(key, value, parent, data){
   console.log(key, value, parent, data);
 }
 
-<JSONEditor 
+<JSONEditor
   data={{
     the: "men",
     that: "landed",
@@ -80,7 +78,6 @@ onJsonChange(key, value, parent, data){
 
 ### View both the json editor and viewer side by side
 
-
 ```javascript
 import {JSONEditor} from 'react-json-editor-viewer';
 
@@ -92,7 +89,7 @@ onJsonChange(key, value, parent, data){
   console.log(key, value, parent, data);
 }
 
-<JSONEditor 
+<JSONEditor
   data={{
     the: "men",
     that: "landed",
@@ -108,9 +105,11 @@ onJsonChange(key, value, parent, data){
   view="dual"
 />
 ```
+
 ![Alt text](images/jsoneditor_dual.png?raw=true "JSON Viewer")
 
 ### Configure your optional custom styles
+
 See the source for the [Demo App](src/demo/App.js)
 
 default
