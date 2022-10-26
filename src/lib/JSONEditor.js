@@ -277,11 +277,35 @@ export default class JSONEditor extends React.Component {
       this.props.onChange(removeKey, currentValue, parent, this.state.data);
   };
 
-  saveElement = (parent, saveKey) => {
+  saveElement = (parent, saveKey, type, newValue) => {
     let value = parent[EDIT_KEY];
+
+    // if type exists then it is a new item
+    if (type === "object") {
+      value = {};
+    }
+    if (type === "array") {
+      value = [];
+    }
+    if (type === "null") {
+      value = null;
+    }
+    if (type === "number") {
+      try {
+        value = parseFloat(newValue);
+      } catch (error) {
+        value = 0;
+      }
+    }
+    if(type === "boolean") {
+      value = newValue === "true"
+    }
+    // else string
+
     parent[saveKey] = value;
     delete parent[EDIT_KEY];
     this.setState(this.state.data);
+    
     if (this.props.onChange)
       this.props.onChange(saveKey, value, parent, this.state.data);
   };
