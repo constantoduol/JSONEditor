@@ -40,6 +40,9 @@ export const jsonEditorDefaultStyles = {
     borderRadius: 3,
     borderColor: "#d3d3d3",
   },
+  typeSelect: {
+    marginLeft: 10
+  },
   input: {
     borderRadius: 3,
     border: "1px solid #d3d3d3",

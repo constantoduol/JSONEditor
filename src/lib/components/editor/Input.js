@@ -11,6 +11,8 @@ export default class Input extends React.Component {
     this.state = {
       hovering: false,
       editableInput: null,
+      type: props.type,
+      value: props.value,
     };
   }
 
@@ -26,10 +28,22 @@ export default class Input extends React.Component {
     this.setState({ editableInput: event.target.value });
   };
 
+  onTypeChanged = (event) => {
+    this.setState((state) => ({ ...state, type: event.target.value }));
+  };
+
+  onValueChanged = (event) => {
+    this.setState({ value: event.target.value }, () => {
+      if(this.props.label !== EDIT_KEY || this.state.type === "text") {
+        this.props.onChange(event)
+      }
+    });
+  };
+
   onSaveElement = () => {
     let { saveElement, parent } = this.props;
-    let { editableInput } = this.state;
-    saveElement(parent, editableInput);
+    let { editableInput,type,value } = this.state;
+    saveElement(parent, editableInput, type,value);
   };
 
   render() {
@@ -37,9 +51,6 @@ export default class Input extends React.Component {
       marginLeft,
       marginBottom,
       label,
-      value,
-      type,
-      onChange,
       removeElement,
       parent,
       currentKey,
@@ -47,6 +58,7 @@ export default class Input extends React.Component {
       styles,
     } = this.props;
     let style = merge({ marginLeft, marginBottom }, styles.row);
+    const { type, value } = this.state;
     return (
       <div
         style={style}
@@ -59,13 +71,48 @@ export default class Input extends React.Component {
           onEditableInputChange={this.onEditableInputChange}
           marginLeft={0}
         />
+
+        <div hidden={label !== EDIT_KEY} style={styles.typeSelect}>
+          <label htmlFor="type-selector" hidden>
+            Select type:
+          </label>
+          <select
+            name="type"
+            id="type-selector"
+            style={styles.select}
+            onChange={this.onTypeChanged}
+          >
+            <option value="text">{'""'}</option>
+            <option value="object">{"{}"}</option>
+            <option value="array">[]</option>
+            <option value="boolean">T/F</option>
+            <option value="number">0-9</option>
+            <option value="null">null</option>
+          </select>
+        </div>
+
         <div style={styles.value}>
-          <input
-            style={styles.input}
-            type={type}
-            value={value}
-            onChange={onChange}
-          />
+          {type === "object" && <span style={styles.input}>{"{}"}</span>}
+          {type === "array" && <span style={styles.input}>{"[]"}</span>}
+          {type === "null" && <span style={styles.input}>{"null"}</span>}
+          {type === "boolean" && (
+            <select
+              style={styles.select}
+              value={value === 'true'}
+              onChange={this.onValueChanged}
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          )}
+          {(type === "text" || type === "number") && (
+            <input
+              style={styles.input}
+              type={type}
+              value={value}
+              onChange={this.onValueChanged}
+            />
+          )}
         </div>
         <div hidden={label !== EDIT_KEY}>
           <SaveIcon
