@@ -4,6 +4,7 @@ import RemoveIcon from "./RemoveIcon";
 import SaveIcon from "./SaveIcon";
 import { EDIT_KEY } from "../../util";
 import Label from "./Label";
+import TypeSelector from "./TypeSelector";
 
 export default class Input extends React.Component {
   constructor(props) {
@@ -34,16 +35,16 @@ export default class Input extends React.Component {
 
   onValueChanged = (event) => {
     this.setState({ value: event.target.value }, () => {
-      if(this.props.label !== EDIT_KEY || this.state.type === "text") {
-        this.props.onChange(event)
+      if (this.props.label !== EDIT_KEY || this.state.type === "text") {
+        this.props.onChange(event);
       }
     });
   };
 
   onSaveElement = () => {
     let { saveElement, parent } = this.props;
-    let { editableInput,type,value } = this.state;
-    saveElement(parent, editableInput, type,value);
+    let { editableInput, type, value } = this.state;
+    saveElement(parent, editableInput, type, value);
   };
 
   render() {
@@ -72,24 +73,12 @@ export default class Input extends React.Component {
           marginLeft={0}
         />
 
-        <div hidden={label !== EDIT_KEY} style={styles.typeSelect}>
-          <label htmlFor="type-selector" hidden>
-            Select type:
-          </label>
-          <select
-            name="type"
-            id="type-selector"
-            style={styles.select}
-            onChange={this.onTypeChanged}
-          >
-            <option value="text">{'""'}</option>
-            <option value="object">{"{}"}</option>
-            <option value="array">[]</option>
-            <option value="boolean">T/F</option>
-            <option value="number">0-9</option>
-            <option value="null">null</option>
-          </select>
-        </div>
+        <TypeSelector
+          hidden={label !== EDIT_KEY}
+          styles={styles}
+          type={type}
+          onChange={this.onTypeChanged}
+        />
 
         <div style={styles.value}>
           {type === "object" && <span style={styles.input}>{"{}"}</span>}
@@ -98,7 +87,7 @@ export default class Input extends React.Component {
           {type === "boolean" && (
             <select
               style={styles.select}
-              value={value === 'true'}
+              value={value === "true"}
               onChange={this.onValueChanged}
             >
               <option value="true">True</option>

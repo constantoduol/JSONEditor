@@ -297,15 +297,15 @@ export default class JSONEditor extends React.Component {
         value = 0;
       }
     }
-    if(type === "boolean") {
-      value = newValue === "true"
+    if (type === "boolean") {
+      value = newValue === "true";
     }
     // else string
 
     parent[saveKey] = value;
     delete parent[EDIT_KEY];
     this.setState(this.state.data);
-    
+
     if (this.props.onChange)
       this.props.onChange(saveKey, value, parent, this.state.data);
   };
