@@ -19,7 +19,7 @@ import ParentLabel from "./components/editor/ParentLabel";
 import Input from "./components/editor/Input";
 import { EDIT_KEY } from "./util";
 import { jsonEditorDefaultStyles } from "./util";
-import { getKey } from "./util";
+import { getKey, defaultValueByType } from "./util";
 
 export default class JSONEditor extends React.Component {
   static defaultProps = {
@@ -132,6 +132,7 @@ export default class JSONEditor extends React.Component {
         //special case to avoid showing root
         elems.push(
           <ParentLabel
+            parentType="array"
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
             value={label}
             addElement={this.addElement}
@@ -165,6 +166,7 @@ export default class JSONEditor extends React.Component {
         //special case to avoid showing root
         elems.push(
           <ParentLabel
+            parentType="object"
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
             value={label}
             addElement={this.addElement}
@@ -251,14 +253,14 @@ export default class JSONEditor extends React.Component {
     }
   }
 
-  addElement = (parent) => {
+  addElement = (parent, type = "text") => {
     let newKey = null;
     if (isArray(parent)) {
-      parent.push("");
+      parent.push(defaultValueByType(type));
       newKey = parent.length - 1;
     } else {
       newKey = EDIT_KEY;
-      parent[newKey] = "";
+      parent[newKey] = defaultValueByType(type);
     }
     this.setState({ data: this.state.data });
     if (this.props.onChange)
