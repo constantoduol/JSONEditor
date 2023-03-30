@@ -6,21 +6,57 @@ import { JSONEditor } from "../lib";
 
 const App = () => (
   <div>
-    <h3>Using default styles</h3>
+    <h3>Empty object</h3>
+    <JSONEditor
+      data={{}}
+      view="single"
+      collapsible
+      onChange={this.onJsonChange}
+    />{" "}
+    <h3>Empty array</h3>
+    <JSONEditor
+      data={[]}
+      view="single"
+      collapsible
+      onChange={this.onJsonChange}
+    />{" "}
+    <h3>Empty string</h3>
+    <JSONEditor
+      data={""}
+      view="single"
+      collapsible
+      onChange={this.onJsonChange}
+    />{" "}
+    <h3>A number</h3>
+    <JSONEditor
+      data={1}
+      view="single"
+      collapsible
+      onChange={this.onJsonChange}
+    />{" "}
+    <h3>A boolean</h3>
+    <JSONEditor
+      data={true}
+      view="single"
+      collapsible
+      onChange={this.onJsonChange}
+    />{" "}
+    <h3>Data</h3>
     <JSONEditor
       data={data}
-      view="dual"
+      view="single"
       collapsible
       onChange={this.onJsonChange}
     />
+    {/* 
     <h3>Using customized styles</h3>
     <JSONEditor
       data={data}
-      view="dual"
+      view="single"
       collapsible
       onChange={this.onJsonChange}
       styles={styles}
-    />
+    /> */}
   </div>
 );
 
