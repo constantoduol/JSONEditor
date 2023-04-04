@@ -4,61 +4,66 @@ import { JSONEditor } from "../lib";
 // to compile a production version
 //npm publish to publish
 
-const App = () => (
-  <div>
-    <h3>Empty object</h3>
-    <JSONEditor
-      data={{}}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />{" "}
-    <h3>Empty array</h3>
-    <JSONEditor
-      data={[]}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />{" "}
-    <h3>Empty string</h3>
-    <JSONEditor
-      data={""}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />{" "}
-    <h3>A number</h3>
-    <JSONEditor
-      data={1}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />{" "}
-    <h3>A boolean</h3>
-    <JSONEditor
-      data={true}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />{" "}
-    <h3>Data</h3>
-    <JSONEditor
-      data={data}
-      view="single"
-      collapsible
-      onChange={this.onJsonChange}
-    />
-    {/* 
+const App = () => {
+  const onJsonChange = (key, value, parent, data) => {
+    console.log(key, value, parent, data);
+  };
+  return (
+    <div>
+      <h3>Empty object</h3>
+      <JSONEditor
+        data={{}}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />{" "}
+      <h3>Empty array</h3>
+      <JSONEditor
+        data={[]}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />{" "}
+      <h3>Empty string</h3>
+      <JSONEditor
+        data={""}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />{" "}
+      <h3>A number</h3>
+      <JSONEditor
+        data={1}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />{" "}
+      <h3>A boolean</h3>
+      <JSONEditor
+        data={true}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />{" "}
+      <h3>Data</h3>
+      <JSONEditor
+        data={data}
+        view="single"
+        collapsible
+        onChange={onJsonChange}
+      />
+      {/* 
     <h3>Using customized styles</h3>
     <JSONEditor
       data={data}
       view="single"
       collapsible
-      onChange={this.onJsonChange}
+      onChange={onJsonChange}
       styles={styles}
     /> */}
-  </div>
-);
+    </div>
+  );
+};
 
 const styles = {
   dualView: {
