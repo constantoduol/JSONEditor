@@ -1,6 +1,6 @@
 {
   "name": "react-json-editor-viewer",
-  "version": "1.0.7",
+  "version": "1.1.1",
   "description": "React JSON Editor and JSON Viewer",
   "main": "build/index.js",
   "scripts": {
@@ -56,7 +56,7 @@
     "raf": "3.4.0",
     "react": "17.0.2",
     "react-dev-utils": "^4.2.1",
-    "react-dom": "^16.2.0",
+    "react-dom": "17.0.2",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.6.2",

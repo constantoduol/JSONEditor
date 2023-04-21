@@ -28,6 +28,7 @@ export const jsonEditorDefaultStyles = {
   },
   row: {
     display: "flex",
+    alignItems: "baseline",
   },
   root: {
     fontSize: 14,
@@ -39,6 +40,11 @@ export const jsonEditorDefaultStyles = {
   select: {
     borderRadius: 3,
     borderColor: "#d3d3d3",
+  },
+  typeSelect: {
+    marginLeft: 10,
+    marginTop: 4,
+    marginBottom: 4,
   },
   input: {
     borderRadius: 3,
@@ -101,4 +107,22 @@ export const jsonViewerDefaultStyles = {
   collapseIcon: {
     cursor: "pointer",
   },
+};
+
+export const defaultValueByType = (type = "text") => {
+  switch (type) {
+    case "object":
+      return {};
+    case "array":
+      return [];
+    case "boolean":
+      return false;
+    case "number":
+      return 0;
+    case "null":
+      return null;
+    case "text": // fall-through
+    default:
+      return "";
+  }
 };

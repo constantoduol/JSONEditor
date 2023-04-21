@@ -19,7 +19,8 @@ import ParentLabel from "./components/editor/ParentLabel";
 import Input from "./components/editor/Input";
 import { EDIT_KEY } from "./util";
 import { jsonEditorDefaultStyles } from "./util";
-import { getKey } from "./util";
+import { getKey, defaultValueByType } from "./util";
+import EmptyElement from "./components/editor/EmptyElement";
 
 export default class JSONEditor extends React.Component {
   static defaultProps = {
@@ -132,6 +133,7 @@ export default class JSONEditor extends React.Component {
         //special case to avoid showing root
         elems.push(
           <ParentLabel
+            parentType="array"
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
             value={label}
             addElement={this.addElement}
@@ -151,20 +153,34 @@ export default class JSONEditor extends React.Component {
       if (isNodeCollapsed.call(this, marginLeft, currentKey, marginLeftStep))
         return; //this node is collapsed
 
-      for (let key = 0; key < data.length; key++) {
-        this.recursiveParseData(
-          key,
-          parentKeyPath,
-          data,
-          elems,
-          marginLeft + marginLeftStep
+      if (data.length === 0) {
+        elems.push(
+          <EmptyElement
+            key={getKey("empty_label", currentKey, parentKeyPath, marginLeft)}
+            marginLeft={marginLeft + marginLeftStep}
+            addElement={this.addElement}
+            current={data}
+            label="Add new element"
+            styles={styles}
+          />
         );
+      } else {
+        for (let key = 0; key < data.length; key++) {
+          this.recursiveParseData(
+            key,
+            parentKeyPath,
+            data,
+            elems,
+            marginLeft + marginLeftStep
+          );
+        }
       }
     } else if (isObject(data)) {
       if (marginLeft > 0) {
         //special case to avoid showing root
         elems.push(
           <ParentLabel
+            parentType="object"
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
             value={label}
             addElement={this.addElement}
@@ -184,15 +200,29 @@ export default class JSONEditor extends React.Component {
       if (isNodeCollapsed.call(this, marginLeft, currentKey, marginLeftStep))
         return; //this node is collapsed
 
-      Object.keys(data).forEach((key) => {
-        this.recursiveParseData(
-          key,
-          parentKeyPath,
-          data,
-          elems,
-          marginLeft + marginLeftStep
+      const fields = Object.keys(data);
+      if (fields.length === 0 && marginLeft === 0) {
+        elems.push(
+          <EmptyElement
+            key={getKey("empty_label", currentKey, parentKeyPath, marginLeft)}
+            marginLeft={marginLeft + marginLeftStep}
+            addElement={this.addElement}
+            current={data}
+            label="Add new field"
+            styles={styles}
+          />
         );
-      });
+      } else {
+        fields.forEach((key) => {
+          this.recursiveParseData(
+            key,
+            parentKeyPath,
+            data,
+            elems,
+            marginLeft + marginLeftStep
+          );
+        });
+      }
     } else if (isNumber(data)) {
       elems.push(
         <Input
@@ -251,14 +281,14 @@ export default class JSONEditor extends React.Component {
     }
   }
 
-  addElement = (parent) => {
+  addElement = (parent, type = "text") => {
     let newKey = null;
     if (isArray(parent)) {
-      parent.push("");
+      parent.push(defaultValueByType(type));
       newKey = parent.length - 1;
     } else {
       newKey = EDIT_KEY;
-      parent[newKey] = "";
+      parent[newKey] = defaultValueByType(type);
     }
     this.setState({ data: this.state.data });
     if (this.props.onChange)
@@ -277,11 +307,35 @@ export default class JSONEditor extends React.Component {
       this.props.onChange(removeKey, currentValue, parent, this.state.data);
   };
 
-  saveElement = (parent, saveKey) => {
+  saveElement = (parent, saveKey, type, newValue) => {
     let value = parent[EDIT_KEY];
+
+    // if type exists then it is a new item
+    if (type === "object") {
+      value = {};
+    }
+    if (type === "array") {
+      value = [];
+    }
+    if (type === "null") {
+      value = null;
+    }
+    if (type === "number") {
+      try {
+        value = parseFloat(newValue);
+      } catch (error) {
+        value = 0;
+      }
+    }
+    if (type === "boolean") {
+      value = newValue === "true";
+    }
+    // else string
+
     parent[saveKey] = value;
     delete parent[EDIT_KEY];
     this.setState(this.state.data);
+
     if (this.props.onChange)
       this.props.onChange(saveKey, value, parent, this.state.data);
   };
