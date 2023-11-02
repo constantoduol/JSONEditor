@@ -1,28 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { JSONEditor } from "../lib";
 // npm run build
 // to compile a production version
 //npm publish to publish
 
-const App = () => (
-  <div>
+
+
+const App = () => {
+
+  useEffect(()=>{
+  console.log("api loaded")
+  },[])
+
+  return (
+    <div>
     <h3>Using default styles</h3>
     <JSONEditor
       data={data}
-      view="dual"
+      // view="dual"
       collapsible
       onChange={this.onJsonChange}
     />
     <h3>Using customized styles</h3>
     <JSONEditor
       data={data}
-      view="dual"
+      // view="dual"
       collapsible
       onChange={this.onJsonChange}
       styles={styles}
     />
   </div>
-);
+  )
+  
+  }
 
 const styles = {
   dualView: {
