@@ -1,5 +1,7 @@
 ### Getting started
 
+## Customization as per requirements 
+
 `npm i react-json-editor-viewer`
 
 ### Easily view json in react
