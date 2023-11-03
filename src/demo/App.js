@@ -117,7 +117,7 @@ const styles = {
 };
 
 const data ={
-  name: "monica",
+  name: "pepcus",
   age: null,
   match: true,
   address: [

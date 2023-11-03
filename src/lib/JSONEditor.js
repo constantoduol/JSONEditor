@@ -203,7 +203,7 @@ export default class JSONEditor extends React.Component {
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
           saveElement={this.saveElement}
-         // showRemoveButton={this.props.showRemoveButton}
+         // ={this.props.showRemoveButton}
           showAddButton={this.props.showAddButton}
           label={label}
           type="number"
