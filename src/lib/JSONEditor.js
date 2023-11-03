@@ -130,14 +130,13 @@ export default class JSONEditor extends React.Component {
     if (isArray(data)) {
       if (marginLeft > 0) {
         //special case to avoid showing root
-        // parent node
         elems.push(
           <ParentLabel
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
             value={label}
             addElement={this.addElement}
             removeElement={this.removeElement}
-           // showRemoveButton={this.props.showRemoveButton}
+            showRemoveButton={this.props.showRemoveButton}
             showAddButton={this.props.showAddButton}
             current={data}
             parent={parent}
@@ -164,7 +163,6 @@ export default class JSONEditor extends React.Component {
     } else if (isObject(data)) {
       if (marginLeft > 0) {
         //special case to avoid showing root
-        // root node
         elems.push(
           <ParentLabel
             key={getKey("parent_label", currentKey, parentKeyPath, marginLeft)}
@@ -172,7 +170,7 @@ export default class JSONEditor extends React.Component {
             addElement={this.addElement}
             removeElement={this.removeElement}
             showRemoveButton={this.props.showRemoveButton}
-          //  showAddButton={this.props.showAddButton}
+            showAddButton={this.props.showAddButton}
             current={data}
             parent={parent}
             marginLeft={marginLeft}
@@ -203,7 +201,7 @@ export default class JSONEditor extends React.Component {
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
           saveElement={this.saveElement}
-         // showRemoveButton={this.props.showRemoveButton}
+          showRemoveButton={this.props.showRemoveButton}
           showAddButton={this.props.showAddButton}
           label={label}
           type="number"
@@ -222,7 +220,7 @@ export default class JSONEditor extends React.Component {
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
           saveElement={this.saveElement}
-         // showRemoveButton={this.props.showRemoveButton}
+          showRemoveButton={this.props.showRemoveButton}
           showAddButton={this.props.showAddButton}
           label={label}
           type="text"
@@ -240,7 +238,7 @@ export default class JSONEditor extends React.Component {
           marginLeft={marginLeft}
           marginBottom={this.props.marginBottom}
           removeElement={this.removeElement}
-        // showRemoveButton={this.props.showRemoveButton}
+          showRemoveButton={this.props.showRemoveButton}
           showAddButton={this.props.showAddButton}
           parent={parent}
           currentKey={currentKey}
@@ -256,14 +254,8 @@ export default class JSONEditor extends React.Component {
   addElement = (parent) => {
     let newKey = null;
     if (isArray(parent)) {
-      if (typeof parent[0] == 'object') {
-				var obj2 = JSON.parse(JSON.stringify(parent[parent.length - 1]));
-				parent.splice(parent.length - 1, 0, obj2);
-				newKey = parent.length - 1;
-			} else {
-				parent.push('');
-				newKey = parent.length - 1;
-			}
+      parent.push("");
+      newKey = parent.length - 1;
     } else {
       newKey = EDIT_KEY;
       parent[newKey] = "";

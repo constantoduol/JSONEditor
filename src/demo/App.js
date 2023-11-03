@@ -4,14 +4,24 @@ import { JSONEditor } from "../lib";
 // to compile a production version
 //npm publish to publish
 
+
+
 const App = () => {
 
   useEffect(()=>{
-   console.log("api intigration")
+  console.log("api loaded")
   },[])
-return (
-  <div>   
-    <h3>Simple Json editor</h3>
+
+  return (
+    <div>
+    <h3>Using default styles</h3>
+    <JSONEditor
+      data={data}
+      // view="dual"
+      collapsible
+      onChange={this.onJsonChange}
+    />
+    <h3>Using customized styles</h3>
     <JSONEditor
       data={data}
       // view="dual"
@@ -21,7 +31,8 @@ return (
     />
   </div>
   )
-}
+  
+  }
 
 const styles = {
   dualView: {
@@ -47,7 +58,7 @@ const styles = {
     /*color: "#3E3D32"*/
   },
   label: {
-    color: "red",
+    color: "DeepPink",
     marginTop: 3,
   },
   value: {
@@ -116,34 +127,40 @@ const styles = {
   },
 };
 
-const data ={
-  name: "monica",
-  age: null,
-  match: true,
-  address: [
-    "Panyu Shiqiao on Canton",
-    "Tianhe",
-    {
-      city: "forida meta 11",
+const data = {
+  mobile: {
+    possibleCountryCodes: ["KE", "UG", "TZ"],
+    possibleLengths: {
+      national: "5",
+      sub_national: "7",
     },
-  ],
-  others: {
-    id: 1246,
-    joinTime: "2017-08-20. 10:20",
-    description: "another",
+    exampleNumber: 40123,
+    nationalNumberPattern: "4\\d{4}",
   },
-  employees: [
-    { name: "Ram", email: "ram@gmail.com", age: 23 },
-    { name: "Shyam", email: "shyam23@gmail.com", age: 28 },
-    { name: "John", email: "john@gmail.com", age: 33 },
-    { name: "Bob", email: "bob32@gmail.com", age: 41 },
-  ],
-  member: [
-    { name: "Ram", email: "ram@gmail.com", age: 23 },
-    { name: "Shyam", email: "shyam23@gmail.com", age: 28 },
-    { name: "John", email: "john@gmail.com", age: 33 },
-    { name: "Bob", email: "bob32@gmail.com", age: 41 },
-  ]
-}
+  id: "AC",
+  is_valid_number: true,
+  generalDesc: {
+    nationalNumberPattern: "[46]\\d{4}|[01589]\\d{5}",
+  },
+  countryCode: "247",
+  uan: {
+    possibleLengths: {
+      national: "6",
+    },
+    exampleNumber: 542011,
+    nationalNumberPattern: "[01589]\\d{5}",
+  },
+  references: {
+    sourceUrl: "http://www.itu.int/oth/T02020000AF/en",
+  },
+  internationalPrefix: "00",
+  fixedLine: {
+    possibleLengths: {
+      national: "5",
+    },
+    exampleNumber: 62889,
+    nationalNumberPattern: "6[2-467]\\d{3}",
+  },
+};
 
 export default App;
